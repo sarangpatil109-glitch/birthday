@@ -1,0 +1,533 @@
+/* Birthday Template Styles */
+.template-root {
+  background: #080810;
+  color: #F0EDE6;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* ---- HERO ---- */
+.t-hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 4rem 1.5rem;
+  position: relative;
+}
+.t-hero-orb {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(100px);
+}
+.t-hero-tagline {
+  font-family: 'Courier New', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #C9A96E;
+  margin-bottom: 2rem;
+}
+.t-hero-title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(3rem, 9vw, 7rem);
+  font-weight: 300;
+  line-height: 1.0;
+  margin-bottom: 1.5rem;
+  color: #F0EDE6;
+}
+.t-hero-title span {
+  background: linear-gradient(135deg, #C9A96E 0%, #E8C987 50%, #C9A96E 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-style: italic;
+}
+.t-hero-sub {
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: #9B97A0;
+  max-width: 560px;
+  margin: 0 auto 3rem;
+}
+
+/* ---- SECTION SHARED ---- */
+.t-section {
+  padding: 6rem 1.5rem;
+  position: relative;
+}
+.t-section-header {
+  text-align: center;
+  margin-bottom: 3.5rem;
+}
+.t-section-tag {
+  font-family: 'Courier New', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #C9A96E;
+  display: block;
+  margin-bottom: 1rem;
+}
+.t-section-title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 300;
+  color: #F0EDE6;
+}
+.t-gold-divider {
+  width: 60px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #C9A96E, transparent);
+  margin: 1.5rem auto 0;
+}
+
+/* ---- GALLERY ---- */
+.t-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.t-gallery-item {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  aspect-ratio: 4/3;
+  cursor: pointer;
+}
+.t-gallery-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+.t-gallery-item:hover .t-gallery-img {
+  transform: scale(1.05);
+}
+.t-gallery-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(8,8,16,0.8) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 0.3s;
+  display: flex;
+  align-items: flex-end;
+  padding: 1.25rem;
+}
+.t-gallery-item:hover .t-gallery-overlay { opacity: 1; }
+
+/* ---- GLASS PANEL ---- */
+.t-glass {
+  background: rgba(255,255,255,0.04);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(201,169,110,0.2);
+  border-radius: 16px;
+}
+
+/* ---- LETTER ---- */
+.t-letter-wrap {
+  max-width: 680px;
+  margin: 0 auto;
+}
+.t-envelope {
+  padding: 3rem 2.5rem;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.3s;
+}
+.t-envelope:hover { transform: scale(1.01); }
+.t-wax-seal {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #C9A96E, #8B6E3E);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  font-size: 2rem;
+  color: #080810;
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 600;
+  box-shadow: 0 4px 20px rgba(201,169,110,0.3);
+}
+.t-letter-body {
+  padding: 3rem 2.5rem;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.25rem;
+  line-height: 1.8;
+  color: #F0EDE6;
+  white-space: pre-wrap;
+}
+
+/* ---- FLIP CARDS ---- */
+.t-reasons-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.25rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+.t-flip-card {
+  height: 220px;
+  perspective: 1000px;
+}
+.t-flip-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+}
+.t-flip-card:hover .t-flip-inner { transform: rotateY(180deg); }
+.t-flip-front, .t-flip-back {
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  backface-visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  text-align: center;
+}
+.t-flip-front { background: rgba(255,255,255,0.04); border: 1px solid rgba(201,169,110,0.2); }
+.t-flip-back { background: linear-gradient(135deg, rgba(201,169,110,0.15), rgba(255,255,255,0.04)); border: 1px solid rgba(201,169,110,0.35); transform: rotateY(180deg); }
+
+/* ---- COUNTDOWN ---- */
+.t-countdown-grid {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.t-countdown-block {
+  padding: 2rem 1.5rem;
+  text-align: center;
+  min-width: 110px;
+}
+.t-countdown-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 3.5rem;
+  font-weight: 300;
+  background: linear-gradient(135deg, #C9A96E 0%, #E8C987 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1;
+}
+.t-countdown-label {
+  font-family: 'Courier New', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #9B97A0;
+  margin-top: 0.5rem;
+}
+
+/* ---- CAKE ---- */
+.t-cake-container {
+  position: relative;
+  width: 200px;
+  margin: 0 auto 2rem;
+}
+.t-cake-layer {
+  border-radius: 12px;
+  position: relative;
+}
+.t-cake-top { height: 50px; background: linear-gradient(135deg, #E8C987, #C9A96E); width: 140px; margin: 0 auto; }
+.t-cake-mid { height: 60px; background: linear-gradient(135deg, #C9A96E, #8B6E3E); width: 180px; margin: 0 auto; }
+.t-cake-bot { height: 70px; background: linear-gradient(135deg, #8B6E3E, #5C4A28); width: 200px; }
+.t-candle-row {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  position: absolute;
+  top: -60px;
+  left: 0;
+  right: 0;
+}
+.t-candle {
+  width: 12px;
+  height: 45px;
+  background: linear-gradient(to bottom, #F0EDE6, #E8C987);
+  border-radius: 4px;
+  position: relative;
+  cursor: pointer;
+}
+.t-flame {
+  position: absolute;
+  top: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 10px;
+  height: 18px;
+  border-radius: 50% 50% 20% 20%;
+  background: radial-gradient(circle at 50% 60%, #FFF176, #FFB300, #FF6F00);
+  filter: blur(1px);
+  animation: flicker 0.8s ease-in-out infinite alternate;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.t-flame.lit { opacity: 1; }
+@keyframes flicker {
+  0% { transform: translateX(-50%) scale(1) rotate(-2deg); }
+  100% { transform: translateX(-50%) scale(1.1) rotate(2deg); }
+}
+
+/* ---- CAROUSEL ---- */
+.t-wishes-wrap {
+  overflow: hidden;
+  max-width: 700px;
+  margin: 0 auto;
+}
+.t-wish-card {
+  padding: 2rem;
+  min-width: 100%;
+}
+.t-wish-quote {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 4rem;
+  color: #C9A96E;
+  line-height: 0.5;
+  opacity: 0.5;
+}
+.t-wish-message {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.15rem;
+  line-height: 1.7;
+  color: #F0EDE6;
+  margin: 1rem 0;
+  font-style: italic;
+}
+.t-wish-author {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+.t-wish-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid rgba(201,169,110,0.3);
+}
+
+/* ---- GIFT ---- */
+.t-gift-box {
+  width: 140px;
+  margin: 0 auto 2rem;
+  cursor: pointer;
+}
+.t-gift-lid {
+  height: 45px;
+  background: linear-gradient(135deg, #C9A96E, #E8C987);
+  border-radius: 10px 10px 0 0;
+  position: relative;
+  transition: transform 0.5s;
+  transform-origin: bottom;
+}
+.t-gift-body {
+  height: 90px;
+  background: linear-gradient(135deg, #8B6E3E, #C9A96E);
+  border-radius: 0 0 10px 10px;
+}
+.t-gift-box.opened .t-gift-lid {
+  transform: translateY(-60px) rotate(-30deg);
+}
+.t-gift-ribbon-v {
+  position: absolute;
+  width: 12px;
+  height: 100%;
+  background: rgba(8,8,16,0.3);
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 2px;
+}
+.t-gift-ribbon-h {
+  position: absolute;
+  height: 12px;
+  width: 100%;
+  background: rgba(8,8,16,0.3);
+  top: 50%;
+  transform: translateY(-50%);
+  border-radius: 2px;
+}
+
+/* ---- FINAL WISH ---- */
+.t-final {
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 6rem 1.5rem;
+  background: radial-gradient(ellipse at center, rgba(201,169,110,0.06) 0%, transparent 70%);
+}
+.t-final-title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(3rem, 8vw, 6rem);
+  font-weight: 300;
+  line-height: 1.05;
+  margin-bottom: 1.5rem;
+}
+.t-final-title span {
+  background: linear-gradient(135deg, #C9A96E 0%, #E8C987 50%, #C9A96E 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-style: italic;
+}
+
+/* ---- LIGHTBOX ---- */
+.t-lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(8,8,16,0.95);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+.t-lightbox-img {
+  max-width: 90vw;
+  max-height: 85vh;
+  object-fit: contain;
+  border-radius: 12px;
+}
+.t-lightbox-close {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  background: rgba(255,255,255,0.1);
+  border: none;
+  color: #F0EDE6;
+  cursor: pointer;
+  padding: 0.6rem;
+  border-radius: 50%;
+  display: flex;
+  font-size: 1.2rem;
+}
+
+/* ---- VIDEO ---- */
+.t-video-card {
+  max-width: 800px;
+  margin: 0 auto;
+  border-radius: 16px;
+  overflow: hidden;
+  position: relative;
+}
+.t-video-placeholder {
+  width: 100%;
+  aspect-ratio: 16/9;
+  object-fit: cover;
+}
+.t-video-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(8,8,16,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.t-video-overlay:hover { background: rgba(8,8,16,0.2); }
+.t-play-btn {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: rgba(201,169,110,0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #080810;
+}
+
+/* Confetti */
+.t-confetti-piece {
+  position: fixed;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  pointer-events: none;
+  animation: confetti-fall 3s linear forwards;
+  z-index: 10001;
+}
+@keyframes confetti-fall {
+  0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+}
+
+@media (max-width: 640px) {
+  .t-section { padding: 4rem 1rem; }
+  .t-letter-body { padding: 2rem 1.25rem; font-size: 1.05rem; }
+  .t-countdown-block { min-width: 80px; padding: 1.25rem 1rem; }
+  .t-countdown-num { font-size: 2.5rem; }
+}
+
+/* ---- MOBILE ENHANCEMENTS ---- */
+@media (max-width: 480px) {
+  .t-hero-title {
+    font-size: clamp(2.5rem, 12vw, 4rem);
+  }
+  .t-hero-sub {
+    font-size: 0.95rem;
+  }
+  .t-gallery-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+  .t-reasons-grid {
+    grid-template-columns: 1fr;
+  }
+  .t-flip-card {
+    height: 180px;
+  }
+  .t-wish-card {
+    padding: 1.5rem;
+  }
+  .t-cake-container {
+    transform: scale(0.85);
+    transform-origin: center top;
+  }
+  .t-final-title {
+    font-size: clamp(2.5rem, 10vw, 4rem);
+  }
+  .t-letter-wrap {
+    padding: 0;
+  }
+}
+
+/* Touch devices: enable flip on tap instead of hover */
+@media (hover: none) {
+  .t-flip-card:focus-within .t-flip-inner,
+  .t-flip-card:active .t-flip-inner {
+    transform: rotateY(180deg);
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .t-flame {
+    animation: none;
+    opacity: 1;
+  }
+  .t-confetti-piece {
+    animation: none;
+    display: none;
+  }
+  .t-flip-inner {
+    transition: none;
+  }
+  .t-gallery-img {
+    transition: none;
+  }
+}

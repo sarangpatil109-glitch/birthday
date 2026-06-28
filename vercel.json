@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "app/api/websites/create/route.ts": {
+      "maxDuration": 60
+    }
+  }
+}

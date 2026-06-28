@@ -1,0 +1,76 @@
+@import "tailwindcss";
+
+:root {
+  --gold: #C9A96E;
+  --gold-light: #E8C987;
+  --gold-muted: #8B6E3E;
+  --bg-deep: #080810;
+  --bg-mid: #0D0D1A;
+  --bg-card: rgba(255,255,255,0.04);
+  --text-primary: #F0EDE6;
+  --text-muted: #9B97A0;
+  --border-gold: rgba(201,169,110,0.25);
+  --border-subtle: rgba(255,255,255,0.08);
+  --radius: 16px;
+  --radius-sm: 10px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg-deep);
+  color: var(--text-primary);
+  font-family: 'Georgia', serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg-deep); }
+::-webkit-scrollbar-thumb { background: var(--gold-muted); border-radius: 4px; }
+
+.glass {
+  background: var(--bg-card);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border-gold);
+  border-radius: var(--radius);
+}
+
+.gold-text {
+  background: linear-gradient(135deg, #C9A96E 0%, #E8C987 50%, #C9A96E 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.section { padding: 6rem 1.5rem; position: relative; z-index: 1; }
+
+.mono {
+  font-family: 'Courier New', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.gold-divider {
+  width: 60px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  margin: 1.5rem auto;
+}
+
+/* ── Responsive ────────────────────────────────────── */
+@media (max-width: 768px) {
+  .section { padding: 4rem 1rem; }
+}
+
+/* Prevent iOS Safari from zooming on input focus */
+@media (max-width: 768px) {
+  input,
+  textarea,
+  select {
+    font-size: max(16px, 1em) !important;
+  }
+}
