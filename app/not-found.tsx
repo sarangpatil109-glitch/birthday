@@ -10,36 +10,41 @@ export default function NotFound() {
     <main
       style={{
         minHeight: '100vh',
-        background: 'var(--bg-deep)',
+        background: 'var(--color-bg)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         textAlign: 'center',
         padding: '2rem 1.5rem',
         position: 'relative',
+        overflow: 'hidden',
       }}
     >
-      {/* Background glow */}
+      {/* Ambient glow */}
       <div
+        aria-hidden="true"
         style={{
           position: 'absolute',
-          inset: 0,
-          background: 'radial-gradient(ellipse at 50% 40%, rgba(201,169,110,0.04) 0%, transparent 60%)',
+          top: '-10%',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: '600px',
+          height: '600px',
+          background: 'radial-gradient(circle, rgba(212,175,55,0.04) 0%, transparent 65%)',
           pointerEvents: 'none',
         }}
       />
 
-      <div style={{ position: 'relative', zIndex: 1, maxWidth: '480px' }}>
-        <div style={{ fontSize: '3.5rem', marginBottom: '1.25rem' }}>🌙</div>
-
+      <div style={{ position: 'relative', zIndex: 1, maxWidth: '440px' }}>
+        {/* 404 label */}
         <div
           style={{
-            fontFamily: 'Courier New, monospace',
-            fontSize: '0.7rem',
-            letterSpacing: '0.2em',
+            fontFamily: 'var(--font-mono)',
+            fontSize: '0.62rem',
+            letterSpacing: '0.22em',
             textTransform: 'uppercase',
-            color: '#C9A96E',
-            marginBottom: '1rem',
+            color: 'var(--color-gold)',
+            marginBottom: '1.5rem',
           }}
         >
           404 — Page Not Found
@@ -47,48 +52,46 @@ export default function NotFound() {
 
         <h1
           style={{
-            fontFamily: "'Cormorant Garamond', Georgia, serif",
+            fontFamily: 'var(--font-serif)',
             fontSize: 'clamp(1.8rem, 5vw, 3rem)',
             fontWeight: 300,
-            color: '#F0EDE6',
+            color: 'var(--color-text-primary)',
             marginBottom: '1rem',
-            lineHeight: 1.2,
+            lineHeight: 1.15,
+            letterSpacing: '-0.015em',
           }}
         >
-          This page doesn&apos;t exist
+          This page{' '}
+          <em className="gold-text" style={{ fontStyle: 'italic' }}>
+            doesn&apos;t exist
+          </em>
         </h1>
 
-        <p style={{ color: '#9B97A0', lineHeight: 1.7, marginBottom: '2.5rem', fontSize: '0.95rem' }}>
-          The birthday website you&apos;re looking for may have an incorrect link, or this page may not exist.
+        <p
+          style={{
+            color: 'var(--color-text-secondary)',
+            lineHeight: 1.75,
+            marginBottom: '2.5rem',
+            fontSize: '0.92rem',
+            fontWeight: 300,
+          }}
+        >
+          The birthday website you&apos;re looking for may have an incorrect link,
+          or this page may not exist.
         </p>
 
-        <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-          <Link
-            href="/"
-            style={{
-              padding: '0.8rem 2rem',
-              background: 'linear-gradient(135deg, #C9A96E 0%, #E8C987 100%)',
-              color: '#080810',
-              borderRadius: '50px',
-              textDecoration: 'none',
-              fontWeight: 600,
-              fontSize: '0.9rem',
-            }}
-          >
+        <div
+          style={{
+            display: 'flex',
+            gap: '0.85rem',
+            justifyContent: 'center',
+            flexWrap: 'wrap',
+          }}
+        >
+          <Link href="/" className="btn-primary" style={{ fontSize: '0.88rem' }}>
             Go Home
           </Link>
-          <Link
-            href="/create"
-            style={{
-              padding: '0.8rem 2rem',
-              background: 'transparent',
-              color: '#C9A96E',
-              border: '1px solid rgba(201,169,110,0.3)',
-              borderRadius: '50px',
-              textDecoration: 'none',
-              fontSize: '0.9rem',
-            }}
-          >
+          <Link href="/create" className="btn-ghost" style={{ fontSize: '0.88rem' }}>
             Create Website
           </Link>
         </div>

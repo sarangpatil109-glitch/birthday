@@ -155,18 +155,39 @@ export default function PreviewClient({ websiteId }: { websiteId: string }) {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          background: 'var(--bg-deep)',
+          background: 'var(--color-bg)',
         }}
       >
         <div style={{ textAlign: 'center' }}>
           <motion.div
-            animate={{ opacity: [0.4, 1, 0.4] }}
-            transition={{ duration: 1.5, repeat: Infinity }}
-            style={{ fontSize: '2.5rem', marginBottom: '1rem' }}
+            animate={{ opacity: [0.3, 1, 0.3] }}
+            transition={{ duration: 1.8, repeat: Infinity }}
+            style={{
+              width: '48px',
+              height: '48px',
+              borderRadius: '50%',
+              background: 'rgba(212,175,55,0.08)',
+              border: '1px solid rgba(212,175,55,0.2)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 1.25rem',
+              fontSize: '1.35rem',
+            }}
           >
-            🌙
+            ✦
           </motion.div>
-          <div className="mono">Loading your website…</div>
+          <div
+            style={{
+              fontFamily: 'var(--font-mono)',
+              fontSize: '0.62rem',
+              letterSpacing: '0.2em',
+              textTransform: 'uppercase',
+              color: 'var(--color-gold)',
+            }}
+          >
+            Loading website…
+          </div>
         </div>
       </div>
     );
@@ -181,27 +202,27 @@ export default function PreviewClient({ websiteId }: { websiteId: string }) {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          background: 'var(--bg-deep)',
+          background: 'var(--color-bg)',
           padding: '2rem',
         }}
       >
         <div style={{ textAlign: 'center', maxWidth: '400px' }}>
-          <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>😔</div>
-          <div className="mono" style={{ color: '#FF6B6B', marginBottom: '1rem' }}>
+          <div
+            style={{
+              fontFamily: 'var(--font-mono)',
+              fontSize: '0.62rem',
+              letterSpacing: '0.2em',
+              textTransform: 'uppercase',
+              color: 'var(--color-error)',
+              marginBottom: '1.25rem',
+            }}
+          >
             {error ?? 'Website not found'}
           </div>
           <a
             href="/create"
-            style={{
-              color: '#C9A96E',
-              display: 'inline-block',
-              marginTop: '0.5rem',
-              textDecoration: 'none',
-              border: '1px solid rgba(201,169,110,0.3)',
-              borderRadius: '50px',
-              padding: '0.6rem 1.5rem',
-              fontSize: '0.9rem',
-            }}
+            className="btn-ghost"
+            style={{ fontSize: '0.85rem' }}
           >
             Create a new website →
           </a>
@@ -224,11 +245,11 @@ export default function PreviewClient({ websiteId }: { websiteId: string }) {
           left: 0,
           right: 0,
           zIndex: 9999,
-          background: 'rgba(8,8,16,0.97)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          borderBottom: '1px solid rgba(201,169,110,0.2)',
-          padding: '0.75rem 1.5rem',
+          background: 'rgba(5,5,5,0.96)',
+          backdropFilter: 'blur(24px)',
+          WebkitBackdropFilter: 'blur(24px)',
+          borderBottom: '1px solid var(--color-border-gold)',
+          padding: '0.7rem 1.5rem',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
@@ -237,49 +258,43 @@ export default function PreviewClient({ websiteId }: { websiteId: string }) {
         }}
       >
         <div>
-          <div className="mono" style={{ fontSize: '0.65rem', marginBottom: '0.15rem' }}>
-            ✦ Preview Mode
+          <div
+            style={{
+              fontFamily: 'var(--font-mono)',
+              fontSize: '0.58rem',
+              letterSpacing: '0.2em',
+              textTransform: 'uppercase',
+              color: 'var(--color-gold)',
+              marginBottom: '0.15rem',
+            }}
+          >
+            Preview Mode
           </div>
-          <p style={{ color: '#9B97A0', fontSize: '0.78rem', margin: 0 }}>
+          <p style={{ color: 'var(--color-text-tertiary)', fontSize: '0.75rem', margin: 0, fontWeight: 300 }}>
             Exactly how it looks when published
           </p>
         </div>
 
-        <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: '0.65rem', alignItems: 'center', flexWrap: 'wrap' }}>
           <a
             href="/create"
-            style={{
-              padding: '0.55rem 1.1rem',
-              background: 'transparent',
-              border: '1px solid rgba(201,169,110,0.3)',
-              borderRadius: '50px',
-              color: '#C9A96E',
-              fontSize: '0.82rem',
-              textDecoration: 'none',
-              whiteSpace: 'nowrap',
-            }}
+            className="btn-ghost"
+            style={{ fontSize: '0.8rem', padding: '0.5rem 1rem' }}
           >
             ← Edit
           </a>
           <button
             onClick={handlePay}
             disabled={paying}
+            className="btn-primary"
             style={{
-              padding: '0.55rem 1.4rem',
-              background: paying
-                ? 'rgba(201,169,110,0.35)'
-                : 'linear-gradient(135deg, #C9A96E 0%, #E8C987 100%)',
-              color: '#080810',
-              border: 'none',
-              borderRadius: '50px',
-              fontSize: '0.9rem',
-              fontWeight: 700,
+              fontSize: '0.85rem',
+              padding: '0.55rem 1.35rem',
               cursor: paying ? 'not-allowed' : 'pointer',
-              whiteSpace: 'nowrap',
-              transition: 'all 0.2s',
+              opacity: paying ? 0.6 : 1,
             }}
           >
-            {paying ? '⏳ Processing…' : '🔓 Publish for ₹99'}
+            {paying ? 'Processing…' : 'Publish for ₹99'}
           </button>
         </div>
       </motion.div>
@@ -291,16 +306,17 @@ export default function PreviewClient({ websiteId }: { websiteId: string }) {
           animate={{ opacity: 1, y: 0 }}
           style={{
             position: 'fixed',
-            top: '64px',
+            top: '56px',
             left: 0,
             right: 0,
             zIndex: 9998,
-            background: 'rgba(255,107,107,0.1)',
-            borderBottom: '1px solid rgba(255,107,107,0.3)',
+            background: 'var(--color-error-bg)',
+            borderBottom: '1px solid rgba(224,85,85,0.2)',
             padding: '0.6rem 1.5rem',
             textAlign: 'center',
-            fontSize: '0.85rem',
-            color: '#FF6B6B',
+            fontSize: '0.82rem',
+            fontWeight: 300,
+            color: 'var(--color-error)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -314,7 +330,7 @@ export default function PreviewClient({ websiteId }: { websiteId: string }) {
             style={{
               background: 'none',
               border: 'none',
-              color: '#FF6B6B',
+              color: 'var(--color-error)',
               cursor: 'pointer',
               fontSize: '1rem',
               lineHeight: 1,

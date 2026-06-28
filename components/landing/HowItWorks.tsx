@@ -8,25 +8,25 @@ const steps = [
     step: '01',
     title: 'Fill the Form',
     desc: "Enter the birthday person's name, write your heartfelt message, upload photos, optionally add a video, and pick a background song.",
-    icon: '✍️',
+    time: '~2 min',
   },
   {
     step: '02',
     title: 'Preview Instantly',
-    desc: 'See a live preview of the full cinematic website with all your content before paying anything.',
-    icon: '👁️',
+    desc: 'See a full live preview of the cinematic website with all your content before paying a single rupee.',
+    time: '~1 min',
   },
   {
     step: '03',
-    title: 'Pay ₹99',
-    desc: 'One simple payment via Cashfree. No subscription, no account, no hidden fees.',
-    icon: '💳',
+    title: 'Pay Once',
+    desc: 'One simple ₹99 payment via Cashfree. No subscription, no account required, no hidden fees ever.',
+    time: '~1 min',
   },
   {
     step: '04',
     title: 'Share the Link',
-    desc: 'Get your unique URL, a QR code, and a one-tap WhatsApp share button. Send it and watch them smile.',
-    icon: '🔗',
+    desc: 'Get your unique URL, a downloadable QR code, and a one-tap WhatsApp share button. Watch them smile.',
+    time: 'Instantly',
   },
 ];
 
@@ -35,105 +35,165 @@ export default function HowItWorks() {
     <section
       id="how-it-works"
       className="section"
-      style={{ maxWidth: '860px', margin: '0 auto' }}
+      style={{ maxWidth: '820px', margin: '0 auto' }}
     >
-      <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
-        <div className="mono" style={{ marginBottom: '1rem' }}>
+      {/* Header */}
+      <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
+        <motion.span
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="section-label"
+        >
           Simple Process
-        </div>
-        <h2
-          style={{
-            fontFamily: "'Cormorant Garamond', serif",
-            fontSize: 'clamp(2rem, 5vw, 3.5rem)',
-            fontWeight: 300,
-            color: '#F0EDE6',
-          }}
+        </motion.span>
+        <motion.h2
+          initial={{ opacity: 0, y: 14 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7, delay: 0.1 }}
+          className="section-heading"
         >
           Ready in{' '}
-          <span className="gold-text" style={{ fontStyle: 'italic' }}>
+          <em className="gold-text" style={{ fontStyle: 'italic' }}>
             four steps
-          </span>
-        </h2>
+          </em>
+        </motion.h2>
       </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        {steps.map((s, i) => (
-          <motion.div
-            key={s.step}
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: i * 0.1, duration: 0.5 }}
-            className="glass"
-            style={{
-              padding: '1.6rem 2rem',
-              display: 'flex',
-              alignItems: 'flex-start',
-              gap: '1.5rem',
-            }}
-          >
-            <div
-              className="gold-text"
+      {/* Steps */}
+      <div style={{ position: 'relative' }}>
+        {/* Vertical connector line */}
+        <div
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            left: '26px',
+            top: '52px',
+            bottom: '52px',
+            width: '1px',
+            background: 'linear-gradient(to bottom, var(--color-border-gold), transparent)',
+          }}
+        />
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5px' }}>
+          {steps.map((s, i) => (
+            <motion.div
+              key={s.step}
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.12, duration: 0.55, ease: [0.25, 0.46, 0.45, 0.94] }}
               style={{
-                fontFamily: "'Cormorant Garamond', serif",
-                fontSize: '2.75rem',
-                fontWeight: 300,
-                lineHeight: 1,
-                minWidth: '3rem',
-                opacity: 0.65,
-                flexShrink: 0,
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: '1.5rem',
+                padding: '1.75rem',
+                background: 'var(--color-bg)',
+                border: '1px solid var(--color-border)',
+                borderRadius: 'var(--radius)',
+                transition: 'border-color 0.22s, background 0.22s',
+                position: 'relative',
               }}
+              whileHover={{ borderColor: 'rgba(212,175,55,0.3)', background: 'rgba(212,175,55,0.018)' } as never}
             >
-              {s.step}
-            </div>
-            <div style={{ flex: 1 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.4rem' }}>
-                <span style={{ fontSize: '1.1rem' }}>{s.icon}</span>
-                <h3
+              {/* Step number bubble */}
+              <div
+                style={{
+                  flexShrink: 0,
+                  width: '52px',
+                  height: '52px',
+                  borderRadius: '50%',
+                  background: i === 0 ? 'rgba(212,175,55,0.12)' : 'rgba(255,255,255,0.03)',
+                  border: `1px solid ${i === 0 ? 'rgba(212,175,55,0.4)' : 'var(--color-border)'}`,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontFamily: 'var(--font-serif)',
+                  fontSize: '1.05rem',
+                  color: i === 0 ? 'var(--color-gold)' : 'var(--color-text-tertiary)',
+                  fontWeight: 300,
+                  transition: 'all 0.22s',
+                }}
+              >
+                {s.step}
+              </div>
+
+              {/* Content */}
+              <div style={{ flex: 1, paddingTop: '0.1rem' }}>
+                <div
                   style={{
-                    fontFamily: "'Cormorant Garamond', serif",
-                    fontSize: '1.4rem',
-                    fontWeight: 400,
-                    color: '#F0EDE6',
+                    display: 'flex',
+                    alignItems: 'baseline',
+                    gap: '0.75rem',
+                    marginBottom: '0.5rem',
+                    flexWrap: 'wrap',
                   }}
                 >
-                  {s.title}
-                </h3>
+                  <h3
+                    style={{
+                      fontFamily: 'var(--font-serif)',
+                      fontSize: '1.3rem',
+                      fontWeight: 400,
+                      color: 'var(--color-text-primary)',
+                      letterSpacing: '-0.01em',
+                    }}
+                  >
+                    {s.title}
+                  </h3>
+                  <span
+                    style={{
+                      fontFamily: 'var(--font-mono)',
+                      fontSize: '0.6rem',
+                      letterSpacing: '0.12em',
+                      textTransform: 'uppercase',
+                      color: 'var(--color-text-tertiary)',
+                      background: 'rgba(255,255,255,0.04)',
+                      border: '1px solid var(--color-border)',
+                      borderRadius: '50px',
+                      padding: '0.2rem 0.6rem',
+                    }}
+                  >
+                    {s.time}
+                  </span>
+                </div>
+                <p
+                  style={{
+                    color: 'var(--color-text-secondary)',
+                    lineHeight: 1.7,
+                    fontSize: '0.88rem',
+                    fontWeight: 300,
+                  }}
+                >
+                  {s.desc}
+                </p>
               </div>
-              <p style={{ color: '#9B97A0', lineHeight: 1.65, fontSize: '0.9rem' }}>
-                {s.desc}
-              </p>
-            </div>
-          </motion.div>
-        ))}
+            </motion.div>
+          ))}
+        </div>
       </div>
 
+      {/* CTA */}
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        style={{ textAlign: 'center', marginTop: '2.5rem' }}
+        transition={{ delay: 0.3, duration: 0.6 }}
+        style={{ textAlign: 'center', marginTop: '3.5rem' }}
       >
-        <Link href="/create">
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            style={{
-              padding: '1rem 2.75rem',
-              background: 'linear-gradient(135deg, #C9A96E 0%, #E8C987 100%)',
-              color: '#080810',
-              border: 'none',
-              borderRadius: '50px',
-              fontSize: '1rem',
-              fontWeight: 700,
-              cursor: 'pointer',
-              letterSpacing: '0.02em',
-            }}
-          >
-            Start Creating — ₹99
-          </motion.button>
+        <Link href="/create" className="btn-primary" style={{ fontSize: '0.95rem', padding: '1rem 2.4rem' }}>
+          Start Creating — ₹99
         </Link>
-        <p style={{ color: '#9B97A0', fontSize: '0.78rem', marginTop: '0.75rem' }}>
+        <p
+          style={{
+            color: 'var(--color-text-tertiary)',
+            fontSize: '0.75rem',
+            marginTop: '1rem',
+            fontFamily: 'var(--font-mono)',
+            letterSpacing: '0.08em',
+          }}
+        >
           No account needed · Preview free · Pay only to publish
         </p>
       </motion.div>

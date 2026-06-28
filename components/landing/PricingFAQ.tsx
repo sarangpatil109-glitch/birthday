@@ -1,30 +1,41 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 import Link from 'next/link';
 
 const faqs = [
   {
     q: 'How long does the website stay live?',
-    a: 'Your birthday website stays live indefinitely. Once published, it\'s yours forever.',
+    a: 'Your birthday website stays live indefinitely. Once published, it\'s yours forever — no renewal fees.',
   },
   {
     q: 'Can I edit the website after publishing?',
-    a: 'Currently, editing after publish is not supported. Please preview carefully before paying.',
+    a: 'Currently, editing after publish is not supported. Please preview carefully before completing payment.',
   },
   {
     q: 'What file formats are supported?',
-    a: 'Photos: JPG, PNG, WebP (up to 10 photos, 5MB each). Video: MP4, MOV (up to 100MB).',
+    a: 'Photos: JPG, PNG, WebP (up to 10 photos, 5MB each). Video: MP4, MOV, WebM (up to 100MB).',
   },
   {
     q: 'Is the payment secure?',
-    a: 'Yes. We use Cashfree, a PCI DSS compliant payment gateway trusted by thousands of Indian businesses.',
+    a: 'Yes. We use Cashfree, a PCI DSS Level 1 compliant payment gateway trusted by thousands of Indian businesses.',
   },
   {
     q: 'Can the birthday person see it on mobile?',
-    a: 'Absolutely. The website is fully responsive and beautiful on all devices.',
+    a: 'Absolutely. The website is fully responsive and renders beautifully on all screen sizes and devices.',
   },
+];
+
+const includedFeatures = [
+  'Full cinematic birthday website',
+  'Up to 10 photos + 1 video',
+  'Custom personal message',
+  'Background music selection',
+  'Unique shareable URL',
+  'QR code download',
+  'WhatsApp share button',
+  'Lives forever — no expiry',
 ];
 
 export default function PricingFAQ() {
@@ -33,121 +44,185 @@ export default function PricingFAQ() {
   return (
     <>
       {/* Pricing */}
-      <section className="section" style={{ maxWidth: '700px', margin: '0 auto' }}>
-        <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
-          <div className="mono" style={{ marginBottom: '1rem' }}>Simple Pricing</div>
-          <h2
-            style={{
-              fontFamily: "'Cormorant Garamond', serif",
-              fontSize: 'clamp(2rem, 5vw, 3.5rem)',
-              fontWeight: 300,
-              color: '#F0EDE6',
-            }}
+      <section className="section" style={{ maxWidth: '680px', margin: '0 auto' }}>
+        <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
+          <motion.span
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            className="section-label"
+          >
+            Simple Pricing
+          </motion.span>
+          <motion.h2
+            initial={{ opacity: 0, y: 14 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7, delay: 0.1 }}
+            className="section-heading"
           >
             One price.{' '}
-            <span className="gold-text" style={{ fontStyle: 'italic' }}>
+            <em className="gold-text" style={{ fontStyle: 'italic' }}>
               Forever yours.
-            </span>
-          </h2>
+            </em>
+          </motion.h2>
         </div>
 
         <motion.div
-          initial={{ opacity: 0, scale: 0.97 }}
-          whileInView={{ opacity: 1, scale: 1 }}
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="glass"
+          transition={{ duration: 0.6, delay: 0.15 }}
           style={{
+            background: 'var(--color-surface)',
+            border: '1px solid var(--color-border-gold)',
+            borderRadius: 'var(--radius-xl)',
             padding: '3rem 2.5rem',
             textAlign: 'center',
-            background: 'linear-gradient(135deg, rgba(201,169,110,0.06) 0%, rgba(255,255,255,0.03) 100%)',
+            boxShadow: 'var(--shadow-lg), var(--shadow-gold)',
+            position: 'relative',
+            overflow: 'hidden',
           }}
         >
+          {/* Background glow */}
+          <div
+            aria-hidden="true"
+            style={{
+              position: 'absolute',
+              top: '-40%',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              width: '300px',
+              height: '300px',
+              background: 'radial-gradient(circle, rgba(212,175,55,0.06) 0%, transparent 70%)',
+              pointerEvents: 'none',
+            }}
+          />
+
+          {/* Price */}
           <div
             className="gold-text"
             style={{
-              fontFamily: "'Cormorant Garamond', serif",
-              fontSize: '5rem',
+              fontFamily: 'var(--font-serif)',
+              fontSize: '5.5rem',
               fontWeight: 300,
               lineHeight: 1,
+              marginBottom: '0.25rem',
+              position: 'relative',
             }}
           >
             ₹99
           </div>
-          <div style={{ color: '#9B97A0', marginTop: '0.5rem', marginBottom: '2rem' }}>
+          <p
+            style={{
+              color: 'var(--color-text-tertiary)',
+              fontFamily: 'var(--font-mono)',
+              fontSize: '0.65rem',
+              letterSpacing: '0.18em',
+              textTransform: 'uppercase',
+              marginBottom: '2.5rem',
+            }}
+          >
             One-time · No subscription · Publish instantly
-          </div>
+          </p>
 
+          {/* Features list */}
           <div
             style={{
               display: 'flex',
               flexDirection: 'column',
-              gap: '0.75rem',
-              marginBottom: '2rem',
+              gap: '0.65rem',
+              marginBottom: '2.5rem',
               textAlign: 'left',
             }}
           >
-            {[
-              '✦  Full cinematic birthday website',
-              '✦  Up to 10 photos + 1 video',
-              '✦  Custom personal message',
-              '✦  Background music selection',
-              '✦  Unique shareable URL',
-              '✦  QR code download',
-              '✦  WhatsApp share button',
-              '✦  Lives forever',
-            ].map((item) => (
-              <div key={item} style={{ color: '#C9A96E', fontSize: '0.9rem' }}>
+            {includedFeatures.map((item) => (
+              <div
+                key={item}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.85rem',
+                  color: 'var(--color-text-secondary)',
+                  fontSize: '0.9rem',
+                  fontWeight: 300,
+                }}
+              >
+                {/* Checkmark */}
+                <span
+                  style={{
+                    flexShrink: 0,
+                    width: '18px',
+                    height: '18px',
+                    borderRadius: '50%',
+                    background: 'rgba(212,175,55,0.1)',
+                    border: '1px solid rgba(212,175,55,0.3)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'var(--color-gold)',
+                    fontSize: '0.65rem',
+                  }}
+                >
+                  ✓
+                </span>
                 {item}
               </div>
             ))}
           </div>
 
-          <Link href="/create">
-            <button
-              style={{
-                width: '100%',
-                padding: '1.1rem',
-                background: 'linear-gradient(135deg, #C9A96E 0%, #E8C987 100%)',
-                color: '#080810',
-                border: 'none',
-                borderRadius: '50px',
-                fontSize: '1.05rem',
-                fontWeight: 700,
-                cursor: 'pointer',
-              }}
-            >
-              Create Birthday Website
-            </button>
+          <Link
+            href="/create"
+            className="btn-primary"
+            style={{
+              width: '100%',
+              fontSize: '0.95rem',
+              padding: '1.05rem',
+              borderRadius: '12px',
+            }}
+          >
+            Create Birthday Website
           </Link>
         </motion.div>
       </section>
 
       {/* FAQ */}
-      <section className="section" style={{ maxWidth: '700px', margin: '0 auto' }}>
-        <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
-          <div className="mono" style={{ marginBottom: '1rem' }}>Questions</div>
-          <h2
-            style={{
-              fontFamily: "'Cormorant Garamond', serif",
-              fontSize: 'clamp(1.8rem, 4vw, 3rem)',
-              fontWeight: 300,
-              color: '#F0EDE6',
-            }}
+      <section className="section" style={{ maxWidth: '680px', margin: '0 auto' }}>
+        <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
+          <motion.span
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            className="section-label"
+          >
+            Questions
+          </motion.span>
+          <motion.h2
+            initial={{ opacity: 0, y: 14 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7, delay: 0.1 }}
+            className="section-heading"
+            style={{ fontSize: 'clamp(1.8rem, 4vw, 3rem)' }}
           >
             Common questions
-          </h2>
+          </motion.h2>
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5px', background: 'var(--color-border)', borderRadius: 'var(--radius-lg)', overflow: 'hidden', border: '1px solid var(--color-border)' }}>
           {faqs.map((faq, i) => (
             <motion.div
               key={faq.q}
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.08 }}
-              className="glass"
-              style={{ padding: '1.25rem 1.5rem', cursor: 'pointer' }}
+              transition={{ delay: i * 0.07, duration: 0.5 }}
+              style={{
+                background: open === i ? 'rgba(212,175,55,0.025)' : 'var(--color-bg)',
+                padding: '1.35rem 1.6rem',
+                cursor: 'pointer',
+                transition: 'background 0.2s',
+              }}
               onClick={() => setOpen(open === i ? null : i)}
             >
               <div
@@ -158,30 +233,56 @@ export default function PricingFAQ() {
                   gap: '1rem',
                 }}
               >
-                <span style={{ fontWeight: 500, color: '#F0EDE6', fontSize: '0.95rem' }}>
+                <span
+                  style={{
+                    fontWeight: 400,
+                    color: open === i ? 'var(--color-text-primary)' : 'var(--color-text-secondary)',
+                    fontSize: '0.93rem',
+                    lineHeight: 1.55,
+                    transition: 'color 0.2s',
+                    letterSpacing: '-0.005em',
+                  }}
+                >
                   {faq.q}
                 </span>
                 <span
                   style={{
-                    color: '#C9A96E',
-                    fontSize: '1.2rem',
-                    transition: 'transform 0.2s',
+                    color: 'var(--color-gold)',
+                    fontSize: '1rem',
+                    transition: 'transform 0.25s var(--ease-luxury)',
                     transform: open === i ? 'rotate(45deg)' : 'none',
                     flexShrink: 0,
+                    lineHeight: 1,
                   }}
                 >
                   +
                 </span>
               </div>
-              {open === i && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  style={{ marginTop: '0.75rem', color: '#9B97A0', lineHeight: 1.6, fontSize: '0.9rem' }}
-                >
-                  {faq.a}
-                </motion.div>
-              )}
+
+              <AnimatePresence>
+                {open === i && (
+                  <motion.div
+                    key="answer"
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.28, ease: [0.25, 0.46, 0.45, 0.94] }}
+                    style={{ overflow: 'hidden' }}
+                  >
+                    <p
+                      style={{
+                        marginTop: '0.85rem',
+                        color: 'var(--color-text-secondary)',
+                        lineHeight: 1.75,
+                        fontSize: '0.88rem',
+                        fontWeight: 300,
+                      }}
+                    >
+                      {faq.a}
+                    </p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </motion.div>
           ))}
         </div>

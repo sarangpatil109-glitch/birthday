@@ -101,41 +101,54 @@ export default function VideoPlayer({ src, isPreviewMode = false }: VideoPlayerP
   };
 
   return (
-     <>
-    <h1
-      style={{
-        color: "red",
-        textAlign: "center",
-        fontSize: "40px",
-      }}
-    >
-      NEW VIDEO PLAYER
-    </h1>
-    
     <div style={{ width: '100%', display: 'flex', justifyContent: 'center', padding: '0 1rem' }}>
       <div
-        className="vp-container-wrap"
+        className={`vp-container-wrap ${aspectRatio ? (aspectRatio < 0.85 ? 'vp-phone-frame' : aspectRatio > 1.25 ? 'vp-cinema-frame' : 'vp-square-frame') : ''}`}
         style={{
           width: '100%',
           maxWidth: aspectRatio
-  ? aspectRatio < 1
-    ? "420px"
-    : aspectRatio > 1.2
-    ? "900px"
-    : "520px"
-  : "900px",
+            ? aspectRatio < 0.85
+              ? "320px"
+              : aspectRatio > 1.25
+              ? "900px"
+              : "520px"
+            : "900px",
           position: 'relative',
-          borderRadius: '20px',
-          overflow: "visible",
-          background: 'rgba(5, 5, 10, 0.6)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          border: '1px solid rgba(201, 169, 110, 0.2)',
-          boxShadow: '0 20px 50px rgba(0, 0, 0, 0.5)',
+          borderRadius: aspectRatio && aspectRatio < 0.85 ? '36px' : '20px',
+          overflow: "hidden",
+          background: 'rgba(5, 5, 10, 0.9)',
+          backdropFilter: 'blur(24px)',
+          WebkitBackdropFilter: 'blur(24px)',
+          border: '1px solid var(--color-border-gold)',
+          boxShadow: 'var(--shadow-xl), var(--shadow-gold)',
           height: "auto",
-    transition: "all .35s ease"
+          transition: "all .45s var(--ease-luxury)"
         }}
       >
+        {/* Phone Speaker & Camera notches for portrait phone frame */}
+        {aspectRatio && aspectRatio < 0.85 && (
+          <div
+            style={{
+              position: 'absolute',
+              top: '12px',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              width: '110px',
+              height: '24px',
+              background: '#050505',
+              borderRadius: '20px',
+              zIndex: 10,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              border: '1px solid rgba(255,255,255,0.08)'
+            }}
+          >
+            <div style={{ width: '40px', height: '3px', background: '#222', borderRadius: '2px', marginRight: '8px' }} />
+            <div style={{ width: '6px', height: '6px', background: '#111122', borderRadius: '50%', border: '1px solid #333' }} />
+          </div>
+        )}
+
         {/* Blurred loading placeholder */}
         <AnimatePresence>
           {!loaded && (
@@ -294,6 +307,5 @@ background: "#000",
         )}
             </div>
     </div>
-  </>
-);
+  );
 }

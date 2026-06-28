@@ -6,7 +6,7 @@ import Link from 'next/link';
 
 interface Props {
   slug: string;
-  baseUrl: string; // resolved server-side so no client-side effect needed
+  baseUrl: string;
 }
 
 export default function SuccessClient({ slug, baseUrl }: Props) {
@@ -16,37 +16,24 @@ export default function SuccessClient({ slug, baseUrl }: Props) {
 
   const websiteUrl = `${baseUrl}/w/${slug}`;
 
-  // Generate QR code
   useEffect(() => {
     let objectUrl: string | null = null;
-
     fetch(`/api/qr?url=${encodeURIComponent(websiteUrl)}`)
-      .then((r) => {
-        if (!r.ok) throw new Error('QR generation failed');
-        return r.blob();
-      })
-      .then((blob) => {
-        objectUrl = URL.createObjectURL(blob);
-        setQrUrl(objectUrl);
-      })
+      .then((r) => { if (!r.ok) throw new Error('QR generation failed'); return r.blob(); })
+      .then((blob) => { objectUrl = URL.createObjectURL(blob); setQrUrl(objectUrl); })
       .catch(() => setQrError(true));
-
-    return () => {
-      if (objectUrl) URL.revokeObjectURL(objectUrl);
-    };
+    return () => { if (objectUrl) URL.revokeObjectURL(objectUrl); };
   }, [websiteUrl]);
 
   async function copyLink() {
     try {
       await navigator.clipboard.writeText(websiteUrl);
     } catch {
-      // Fallback for HTTP or restrictive browser contexts
       const ta = document.createElement('textarea');
       ta.value = websiteUrl;
       ta.style.cssText = 'position:fixed;opacity:0';
       document.body.appendChild(ta);
-      ta.focus();
-      ta.select();
+      ta.focus(); ta.select();
       document.execCommand('copy');
       document.body.removeChild(ta);
     }
@@ -75,93 +62,116 @@ export default function SuccessClient({ slug, baseUrl }: Props) {
     <main
       style={{
         minHeight: '100vh',
-        background: 'var(--bg-deep)',
+        background: 'var(--color-bg)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: '2rem 1.5rem',
+        padding: '3rem 1.5rem',
         position: 'relative',
         overflow: 'hidden',
       }}
     >
-      {/* Ambient glow */}
+      {/* Ambient gold glow */}
       <div
         aria-hidden="true"
         style={{
           position: 'absolute',
-          top: '-10%',
+          top: '-15%',
           left: '50%',
           transform: 'translateX(-50%)',
           width: '700px',
           height: '700px',
-          background: 'radial-gradient(circle, rgba(201,169,110,0.07) 0%, transparent 65%)',
-          borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(212,175,55,0.07) 0%, transparent 65%)',
           pointerEvents: 'none',
         }}
       />
 
       <motion.div
-        initial={{ opacity: 0, scale: 0.96, y: 16 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        transition={{ duration: 0.55, ease: [0.25, 0.46, 0.45, 0.94] }}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.65, ease: [0.25, 0.46, 0.45, 0.94] }}
         style={{
-          maxWidth: '540px',
+          maxWidth: '520px',
           width: '100%',
           textAlign: 'center',
           position: 'relative',
           zIndex: 1,
         }}
       >
-        {/* Celebration icon */}
+        {/* Celebration mark */}
         <motion.div
-          animate={{ scale: [1, 1.18, 1], rotate: [0, 6, -4, 0] }}
-          transition={{ duration: 1.1, delay: 0.35, ease: 'easeInOut' }}
-          style={{ fontSize: '3.5rem', marginBottom: '1.25rem' }}
+          animate={{ scale: [1, 1.15, 1] }}
+          transition={{ duration: 1.1, delay: 0.4, ease: 'easeInOut' }}
+          style={{
+            width: '64px',
+            height: '64px',
+            borderRadius: '50%',
+            background: 'rgba(212,175,55,0.1)',
+            border: '1px solid rgba(212,175,55,0.3)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            margin: '0 auto 1.75rem',
+            fontSize: '1.75rem',
+          }}
           aria-hidden="true"
         >
           🎉
         </motion.div>
 
-        <div className="mono" style={{ marginBottom: '0.6rem' }}>✦ Website Published!</div>
+        <span className="section-label" style={{ marginBottom: '1rem', display: 'block' }}>
+          Website Published
+        </span>
 
         <h1
           style={{
-            fontFamily: "'Cormorant Garamond', serif",
-            fontSize: 'clamp(1.8rem, 5vw, 2.8rem)',
+            fontFamily: 'var(--font-serif)',
+            fontSize: 'clamp(1.9rem, 5vw, 3rem)',
             fontWeight: 300,
-            color: '#F0EDE6',
-            marginBottom: '0.75rem',
-            lineHeight: 1.15,
+            color: 'var(--color-text-primary)',
+            marginBottom: '0.85rem',
+            lineHeight: 1.12,
+            letterSpacing: '-0.02em',
           }}
         >
           Your birthday surprise is{' '}
-          <span className="gold-text" style={{ fontStyle: 'italic' }}>live!</span>
+          <em className="gold-text" style={{ fontStyle: 'italic' }}>live!</em>
         </h1>
 
-        <p style={{ color: '#9B97A0', lineHeight: 1.7, marginBottom: '2rem', fontSize: '0.925rem' }}>
-          Share the link with the birthday person and watch their face light up. ✨
+        <p
+          style={{
+            color: 'var(--color-text-secondary)',
+            lineHeight: 1.75,
+            marginBottom: '2.5rem',
+            fontSize: '0.92rem',
+            fontWeight: 300,
+          }}
+        >
+          Share the link with the birthday person and watch their face light up.
         </p>
 
-        {/* URL display */}
+        {/* URL row */}
         <div
-          className="glass"
           style={{
-            padding: '0.85rem 1rem',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'space-between',
             gap: '0.75rem',
-            marginBottom: '1.1rem',
+            background: 'var(--color-surface)',
+            border: '1px solid var(--color-border-gold)',
+            borderRadius: 'var(--radius)',
+            padding: '0.85rem 1rem',
+            marginBottom: '1.25rem',
             flexWrap: 'wrap',
           }}
         >
           <span
             style={{
-              color: '#C9A96E',
-              fontSize: '0.82rem',
+              color: 'var(--color-gold)',
+              fontSize: '0.8rem',
               wordBreak: 'break-all',
               textAlign: 'left',
-              fontFamily: 'Courier New, monospace',
+              fontFamily: 'var(--font-mono)',
+              flex: 1,
             }}
           >
             {websiteUrl}
@@ -169,73 +179,72 @@ export default function SuccessClient({ slug, baseUrl }: Props) {
           <button
             onClick={copyLink}
             style={{
-              padding: '0.42rem 0.9rem',
-              background: copied ? 'rgba(168,230,207,0.15)' : 'rgba(201,169,110,0.1)',
-              border: `1px solid ${copied ? 'rgba(168,230,207,0.4)' : 'rgba(201,169,110,0.3)'}`,
+              padding: '0.4rem 0.9rem',
+              background: copied ? 'rgba(76,175,133,0.12)' : 'var(--color-gold-subtle)',
+              border: `1px solid ${copied ? 'rgba(76,175,133,0.35)' : 'var(--color-border-gold)'}`,
               borderRadius: '50px',
-              color: copied ? '#A8E6CF' : '#C9A96E',
-              fontSize: '0.78rem',
+              color: copied ? 'var(--color-success)' : 'var(--color-gold)',
+              fontSize: '0.76rem',
               cursor: 'pointer',
               flexShrink: 0,
               transition: 'all 0.25s',
               fontWeight: 500,
+              fontFamily: 'var(--font-mono)',
+              letterSpacing: '0.08em',
             }}
           >
-            {copied ? '✓ Copied!' : 'Copy Link'}
+            {copied ? '✓ Copied' : 'Copy'}
           </button>
         </div>
 
         {/* Action buttons */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.7rem', marginBottom: '1.75rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '2rem' }}>
           <a
             href={websiteUrl}
             target="_blank"
             rel="noopener noreferrer"
-            style={{
-              padding: '0.95rem',
-              background: 'linear-gradient(135deg, #C9A96E 0%, #E8C987 100%)',
-              color: '#080810',
-              borderRadius: '50px',
-              fontSize: '0.95rem',
-              fontWeight: 700,
-              textDecoration: 'none',
-              display: 'block',
-              letterSpacing: '0.02em',
-            }}
+            className="btn-primary"
+            style={{ fontSize: '0.92rem', borderRadius: '12px', padding: '0.95rem' }}
           >
-            🔗 Open Birthday Website
+            Open Birthday Website
           </a>
 
           <button
             onClick={shareWhatsApp}
             style={{
-              padding: '0.95rem',
-              background: 'rgba(37,211,102,0.07)',
-              border: '1px solid rgba(37,211,102,0.28)',
-              borderRadius: '50px',
+              padding: '0.9rem',
+              background: 'rgba(37,211,102,0.06)',
+              border: '1px solid rgba(37,211,102,0.22)',
+              borderRadius: '12px',
               color: '#25D366',
-              fontSize: '0.95rem',
+              fontSize: '0.9rem',
               cursor: 'pointer',
               fontWeight: 500,
+              fontFamily: 'var(--font-sans)',
+              transition: 'background 0.2s, border-color 0.2s',
             }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(37,211,102,0.1)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(37,211,102,0.06)'; }}
           >
-            💬 Share on WhatsApp
+            Share on WhatsApp
           </button>
 
           <button
             onClick={downloadQr}
-            disabled={!qrUrl}
+            disabled={!qrUrl && !qrError}
             style={{
-              padding: '0.95rem',
-              background: 'rgba(255,255,255,0.04)',
-              border: `1px solid ${qrError ? 'rgba(255,107,107,0.3)' : 'rgba(255,255,255,0.1)'}`,
-              borderRadius: '50px',
-              color: qrError ? '#FF6B6B' : qrUrl ? '#F0EDE6' : '#9B97A0',
-              fontSize: '0.95rem',
+              padding: '0.9rem',
+              background: 'var(--color-glass)',
+              border: `1px solid ${qrError ? 'rgba(224,85,85,0.3)' : 'var(--color-border)'}`,
+              borderRadius: '12px',
+              color: qrError ? 'var(--color-error)' : qrUrl ? 'var(--color-text-primary)' : 'var(--color-text-tertiary)',
+              fontSize: '0.9rem',
               cursor: qrUrl ? 'pointer' : 'default',
+              fontFamily: 'var(--font-sans)',
+              transition: 'background 0.2s',
             }}
           >
-            {qrError ? '⚠️ QR unavailable' : qrUrl ? '⬇️ Download QR Code' : '⏳ Generating QR…'}
+            {qrError ? 'QR unavailable' : qrUrl ? 'Download QR Code' : 'Generating QR…'}
           </button>
         </div>
 
@@ -244,14 +253,15 @@ export default function SuccessClient({ slug, baseUrl }: Props) {
           <motion.div
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            className="glass"
             style={{
-              padding: '1.35rem',
               display: 'inline-flex',
               flexDirection: 'column',
               alignItems: 'center',
-              borderRadius: '16px',
-              marginBottom: '2rem',
+              background: 'var(--color-surface)',
+              border: '1px solid var(--color-border)',
+              borderRadius: 'var(--radius)',
+              padding: '1.5rem',
+              marginBottom: '2.5rem',
               cursor: 'pointer',
             }}
             onClick={downloadQr}
@@ -261,24 +271,61 @@ export default function SuccessClient({ slug, baseUrl }: Props) {
             <img
               src={qrUrl}
               alt="QR code to open the birthday website"
-              style={{ width: '150px', height: '150px', borderRadius: '8px', display: 'block' }}
+              style={{ width: '140px', height: '140px', borderRadius: '6px', display: 'block' }}
             />
-            <p style={{ color: '#9B97A0', fontSize: '0.7rem', marginTop: '0.55rem', fontFamily: 'Courier New, monospace', letterSpacing: '0.05em' }}>
-              SCAN TO OPEN · CLICK TO SAVE
+            <p
+              style={{
+                color: 'var(--color-text-tertiary)',
+                fontSize: '0.62rem',
+                marginTop: '0.75rem',
+                fontFamily: 'var(--font-mono)',
+                letterSpacing: '0.12em',
+                textTransform: 'uppercase',
+              }}
+            >
+              Scan to open · click to save
             </p>
           </motion.div>
         )}
 
-        {/* Divider */}
-        <div style={{ width: '50px', height: '1px', background: 'linear-gradient(90deg, transparent, rgba(201,169,110,0.35), transparent)', margin: '0 auto 1.5rem' }} />
+        {/* Gold divider */}
+        <div className="gold-divider" style={{ marginBottom: '1.75rem' }} />
 
-        {/* Footer links — use Next.js Link for internal routes */}
-        <div style={{ display: 'flex', gap: '1.5rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-          <Link href="/" style={{ color: '#9B97A0', fontSize: '0.85rem', textDecoration: 'none' }}>
+        {/* Footer nav */}
+        <div
+          style={{
+            display: 'flex',
+            gap: '2rem',
+            justifyContent: 'center',
+            flexWrap: 'wrap',
+          }}
+        >
+          <Link
+            href="/"
+            style={{
+              color: 'var(--color-text-tertiary)',
+              fontSize: '0.82rem',
+              textDecoration: 'none',
+              fontFamily: 'var(--font-mono)',
+              letterSpacing: '0.08em',
+              transition: 'color 0.2s',
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--color-text-secondary)')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--color-text-tertiary)')}
+          >
             ← Home
           </Link>
-          <Link href="/create" style={{ color: '#C9A96E', fontSize: '0.85rem', textDecoration: 'none' }}>
-            Create another website →
+          <Link
+            href="/create"
+            style={{
+              color: 'var(--color-gold)',
+              fontSize: '0.82rem',
+              textDecoration: 'none',
+              fontFamily: 'var(--font-mono)',
+              letterSpacing: '0.08em',
+            }}
+          >
+            Create another →
           </Link>
         </div>
       </motion.div>

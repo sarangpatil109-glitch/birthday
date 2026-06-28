@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function CreatePage() {
   return (
-    <main style={{ background: 'var(--bg-deep)', minHeight: '100vh' }}>
+    <main style={{ background: 'var(--color-bg)', minHeight: '100vh' }}>
       <CreateForm />
     </main>
   );

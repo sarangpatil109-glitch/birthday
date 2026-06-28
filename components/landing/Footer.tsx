@@ -1,33 +1,101 @@
+'use client';
+
 export default function Footer() {
   return (
     <footer
       style={{
-        borderTop: '1px solid rgba(201,169,110,0.1)',
-        padding: '2.5rem 1.5rem',
+        padding: '4rem 2rem 3rem',
         textAlign: 'center',
-        color: '#9B97A0',
-        fontSize: '0.85rem',
+        borderTop: '1px solid var(--color-border)',
+        position: 'relative',
       }}
     >
+      {/* Glow */}
       <div
+        aria-hidden="true"
         style={{
-          fontFamily: "'Cormorant Garamond', serif",
-          fontSize: '1.5rem',
-          fontWeight: 300,
-          marginBottom: '0.5rem',
+          position: 'absolute',
+          top: 0,
+          left: '50%',
+          transform: 'translateX(-50%) translateY(-50%)',
+          width: '200px',
+          height: '1px',
+          background: 'linear-gradient(90deg, transparent, rgba(212,175,55,0.4), transparent)',
         }}
+      />
+
+      {/* Wordmark */}
+      <div
         className="gold-text"
+        style={{
+          fontFamily: 'var(--font-serif)',
+          fontSize: '1.75rem',
+          fontWeight: 300,
+          letterSpacing: '0.03em',
+          marginBottom: '0.75rem',
+        }}
       >
         HeartNote
       </div>
-      <p>Made with love · © {new Date().getFullYear()} HeartNote</p>
-      <div style={{ marginTop: '1rem', display: 'flex', gap: '1.5rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-        <span style={{ color: 'rgba(155,151,160,0.6)' }}>Privacy Policy</span>
-        <span style={{ color: 'rgba(155,151,160,0.6)' }}>Terms of Service</span>
-        <a href="mailto:hello@heartnote.in" style={{ color: 'rgba(155,151,160,0.6)', textDecoration: 'none' }}>
-          Contact
-        </a>
+
+      {/* Tagline */}
+      <p
+        style={{
+          color: 'var(--color-text-tertiary)',
+          fontSize: '0.8rem',
+          fontFamily: 'var(--font-mono)',
+          letterSpacing: '0.12em',
+          textTransform: 'uppercase',
+          marginBottom: '2rem',
+        }}
+      >
+        Premium Birthday Experiences
+      </p>
+
+      {/* Links */}
+      <div
+        style={{
+          display: 'flex',
+          gap: '2rem',
+          justifyContent: 'center',
+          flexWrap: 'wrap',
+          marginBottom: '2.5rem',
+        }}
+      >
+        {[
+          { label: 'Privacy Policy', href: '#' },
+          { label: 'Terms of Service', href: '#' },
+          { label: 'hello@heartnote.in', href: 'mailto:hello@heartnote.in' },
+        ].map((link) => (
+          <a
+            key={link.label}
+            href={link.href}
+            style={{
+              color: 'var(--color-text-tertiary)',
+              fontSize: '0.82rem',
+              textDecoration: 'none',
+              transition: 'color 0.2s',
+              letterSpacing: '0.01em',
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--color-gold)')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--color-text-tertiary)')}
+          >
+            {link.label}
+          </a>
+        ))}
       </div>
+
+      {/* Copyright */}
+      <p
+        style={{
+          color: 'var(--color-text-tertiary)',
+          fontSize: '0.75rem',
+          fontFamily: 'var(--font-mono)',
+          letterSpacing: '0.08em',
+        }}
+      >
+        © {new Date().getFullYear()} HeartNote · Made with love
+      </p>
     </footer>
   );
 }

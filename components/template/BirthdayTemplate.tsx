@@ -1,10 +1,18 @@
 'use client';
 
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Website } from '@/types';
 import VideoPlayer from './VideoPlayer';
 import './template.css';
+import {
+  PREMIUM_QUOTES,
+  PHOTO_CAPTIONS,
+  SECTION_TITLES,
+  ENDING_MESSAGES,
+  generateEmotionalStory,
+  type RelationshipType,
+} from '@/utils/storyTemplates';
 
 interface Props {
   website: Website;
@@ -48,6 +56,38 @@ const SONG_URLS: Record<string, { url: string; title: string; artist: string }> 
   },
 };
 
+function useMagnetic() {
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const ref = useRef<any>(null);
+
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    if (!ref.current) return;
+    const { left, top, width, height } = ref.current.getBoundingClientRect();
+    const centerX = left + width / 2;
+    const centerY = top + height / 2;
+    const distanceX = e.clientX - centerX;
+    const distanceY = e.clientY - centerY;
+    const distance = Math.hypot(distanceX, distanceY);
+
+    if (distance < 90) {
+      setPosition({ x: distanceX * 0.28, y: distanceY * 0.28 });
+    } else {
+      setPosition({ x: 0, y: 0 });
+    }
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    setPosition({ x: 0, y: 0 });
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, [handleMouseMove]);
+
+  return { ref, position, handleMouseLeave };
+}
+
 export default function BirthdayTemplate({ website, isPreview }: Props) {
   const [envelopeOpen, setEnvelopeOpen] = useState(false);
   const [letterExpanded, setLetterExpanded] = useState(false);
@@ -69,6 +109,16 @@ export default function BirthdayTemplate({ website, isPreview }: Props) {
   const [volume, setVolume] = useState(0.4);
   const [musicProgress, setMusicProgress] = useState(0);
   const [playerExpanded, setPlayerExpanded] = useState(false);
+  
+  // Custom interactive engine states
+  const [cursorPos, setCursorPos] = useState({ x: -100, y: -100 });
+  const [isHoveringInteractive, setIsHoveringInteractive] = useState(false);
+  const [surpriseOpen, setSurpriseOpen] = useState(false);
+  const [isHoveringCarousel, setIsHoveringCarousel] = useState(false);
+
+  // Hook calls for luxury magnetic transitions
+  const heroBtnMagnetic = useMagnetic();
+  const surpriseBtnMagnetic = useMagnetic();
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const heroRef = useRef<HTMLDivElement | null>(null);
@@ -79,17 +129,75 @@ export default function BirthdayTemplate({ website, isPreview }: Props) {
   const photos = website.photos?.length ? website.photos : DEFAULT_PHOTOS;
   const toName = website.to_name || 'You';
   const fromName = website.from_name || '';
-  const message = website.message || 'Happy Birthday! Wishing you all the joy and love in the world.';
+  const rawMessage = website.message || 'Happy Birthday! Wishing you all the joy and love in the world.';
   const currentSong = SONG_URLS[website.song] || SONG_URLS.piano;
 
+  // JSON Story engine parser
+  const parsedData = useMemo(() => {
+    try {
+      const parsed = JSON.parse(rawMessage);
+      if (parsed && typeof parsed === 'object' && parsed.generatedStory) {
+        return {
+          relationship: (parsed.relationship || 'other') as RelationshipType,
+          personalMessage: parsed.personalMessage || '',
+          generatedStory: parsed.generatedStory as string,
+        };
+      }
+    } catch {
+      // Return fallback defaults for legacy messages
+    }
+    return {
+      relationship: 'other' as RelationshipType,
+      personalMessage: rawMessage,
+      generatedStory: rawMessage,
+    };
+  }, [rawMessage]);
 
-  // Parallax mouse move handler
+  const { relationship, personalMessage, generatedStory } = parsedData;
+
+  // Stable Memoized Story Engine Selections (V3 Phase 4)
+  const stableCaptions = useMemo(() => {
+    return photos.map(() => {
+      const rand = Math.floor(Math.random() * PHOTO_CAPTIONS.length);
+      return PHOTO_CAPTIONS[rand];
+    });
+  }, [photos]);
+
+  const stableQuotes = useMemo(() => {
+    // Generate 3 unique random quotes from local database
+    const selected: string[] = [];
+    const pool = [...PREMIUM_QUOTES];
+    for (let j = 0; j < 3; j++) {
+      const idx = Math.floor(Math.random() * pool.length);
+      selected.push(pool[idx]);
+      pool.splice(idx, 1);
+    }
+    return selected;
+  }, []);
+
+  const stableTitles = useMemo(() => {
+    const tagRand = Math.floor(Math.random() * SECTION_TITLES.taglines.length);
+    const headRand = Math.floor(Math.random() * SECTION_TITLES.headings.length);
+    return {
+      tag: SECTION_TITLES.taglines[tagRand],
+      heading: SECTION_TITLES.headings[headRand]
+    };
+  }, []);
+
+  const stableEndingMessage = useMemo(() => {
+    const endRand = Math.floor(Math.random() * ENDING_MESSAGES.length);
+    return ENDING_MESSAGES[endRand];
+  }, []);
+
+
+  // Parallax mouse move and absolute cursor tracking handler
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       const { innerWidth, innerHeight } = window;
       const x = (e.clientX - innerWidth / 2) / (innerWidth / 2);
       const y = (e.clientY - innerHeight / 2) / (innerHeight / 2);
       setMousePos({ x, y });
+      setCursorPos({ x: e.clientX, y: e.clientY });
     };
 
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
@@ -141,13 +249,14 @@ export default function BirthdayTemplate({ website, isPreview }: Props) {
     return () => clearInterval(intervalId);
   }, []);
 
-  // Wishes carousel auto slide
+  // Wishes carousel auto slide (pausable on hover)
   useEffect(() => {
+    if (isHoveringCarousel) return;
     const timer = setInterval(() => {
       setCarouselIndex((prev) => (prev + 1) % 3);
     }, 6000);
     return () => clearInterval(timer);
-  }, []);
+  }, [isHoveringCarousel]);
 
   // Audio Playback Helpers
   const toggleMusic = useCallback(() => {
@@ -238,6 +347,24 @@ export default function BirthdayTemplate({ website, isPreview }: Props) {
     setLightboxIndex(idx);
   };
 
+  // Handwritten message typewriter reveal logic
+  const [typedMessage, setTypedMessage] = useState('');
+  useEffect(() => {
+    if (!letterExpanded) {
+      setTypedMessage('');
+      return;
+    }
+    let i = 0;
+    const interval = setInterval(() => {
+      setTypedMessage(generatedStory.slice(0, i + 1));
+      i++;
+      if (i >= generatedStory.length) {
+        clearInterval(interval);
+      }
+    }, 25);
+    return () => clearInterval(interval);
+  }, [letterExpanded, generatedStory]);
+
   // Candle interactions
   const lightCandle = (i: number) => {
     const next = [...candlesLit];
@@ -314,8 +441,98 @@ export default function BirthdayTemplate({ website, isPreview }: Props) {
     },
   ];
 
+  // Interactive mouse over hook for magnetic and cursor scaling effects
+  useEffect(() => {
+    const handleMouseOver = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target) return;
+      const isInteractive = 
+        target.tagName === 'BUTTON' ||
+        target.tagName === 'A' ||
+        target.closest('button') ||
+        target.closest('a') ||
+        target.closest('[role="button"]') ||
+        target.classList.contains('t-gallery-card') ||
+        target.classList.contains('t-flip-card');
+      setIsHoveringInteractive(!!isInteractive);
+    };
+    window.addEventListener('mouseover', handleMouseOver, { passive: true });
+    return () => window.removeEventListener('mouseover', handleMouseOver);
+  }, []);
+
+  const [scrollProgress, setScrollProgress] = useState(0);
+  useEffect(() => {
+    const handleScroll = () => {
+      const total = document.documentElement.scrollHeight - window.innerHeight;
+      if (total > 0) {
+        setScrollProgress((window.scrollY / total) * 100);
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
     <div className="template-root">
+      {/* Luxury Scroll Progress Bar Indicator */}
+      <div
+        className="luxury-scroll-indicator"
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: `${scrollProgress}%`,
+          height: '3px',
+          background: 'linear-gradient(90deg, var(--color-gold) 0%, var(--color-gold-light) 100%)',
+          zIndex: 1000001,
+          willChange: 'width',
+        }}
+      />
+
+      {/* Luxury Custom Solid Cursor Dot (Desktop Only) */}
+      <div
+        className={`luxury-cursor-dot ${isHoveringInteractive ? 'hovering' : ''}`}
+        style={{
+          left: `${cursorPos.x}px`,
+          top: `${cursorPos.y}px`,
+          opacity: cursorPos.x === -100 ? 0 : 1,
+        }}
+      />
+
+      {/* Luxury Custom Cursor Glow (Desktop Only) */}
+      <div
+        className="luxury-cursor-glow"
+        style={{
+          left: `${cursorPos.x}px`,
+          top: `${cursorPos.y}px`,
+          transform: `translate(-50%, -50%) scale(${isHoveringInteractive ? 1.4 : 1})`,
+          opacity: cursorPos.x === -100 ? 0 : 1,
+        }}
+      />
+
+      {/* Floating Fireflies & Golden Dust Particles Overlay */}
+      <div className="luxury-fireflies" aria-hidden="true">
+        {Array.from({ length: 18 }).map((_, i) => {
+          const delay = Math.random() * 8;
+          const duration = 12 + Math.random() * 12;
+          const left = Math.random() * 100;
+          const size = 3 + Math.random() * 5;
+          return (
+            <div
+              key={`firefly-${i}`}
+              className="firefly-particle"
+              style={{
+                left: `${left}vw`,
+                width: `${size}px`,
+                height: `${size}px`,
+                animationDelay: `${delay}s`,
+                animationDuration: `${duration}s`,
+              }}
+            />
+          );
+        })}
+      </div>
+
       {/* Background Audio */}
       <audio ref={audioRef} src={currentSong.url} loop preload="auto" style={{ display: 'none' }} />
 
@@ -328,8 +545,21 @@ export default function BirthdayTemplate({ website, isPreview }: Props) {
             if (!musicPlaying) toggleMusic();
           }}
           aria-label="Expand player controls"
+          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
         >
-          <span style={{ fontSize: '1.15rem' }}>{musicPlaying ? '🎵' : '🎶'}</span>
+          {musicPlaying ? (
+            <div className="music-wave-bars">
+              <span className="wave-bar bar-1"></span>
+              <span className="wave-bar bar-2"></span>
+              <span className="wave-bar bar-3"></span>
+            </div>
+          ) : (
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9 18V5l12-2v13" />
+              <circle cx="6" cy="18" r="3" />
+              <circle cx="18" cy="16" r="3" />
+            </svg>
+          )}
         </button>
 
         <div className="player-controls-expanded">
@@ -350,12 +580,28 @@ export default function BirthdayTemplate({ website, isPreview }: Props) {
             <div className="player-progress-filled" style={{ width: `${musicProgress}%` }} />
           </div>
 
-          <button className="player-btn" onClick={toggleMusic} aria-label={musicPlaying ? 'Pause' : 'Play'}>
-            {musicPlaying ? '⏸' : '▶'}
+          <button
+            className="player-btn"
+            onClick={toggleMusic}
+            aria-label={musicPlaying ? 'Pause' : 'Play'}
+            style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
+          >
+            {musicPlaying ? (
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+              </svg>
+            ) : (
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+            )}
           </button>
 
-          <div className="player-volume-control">
-            <span style={{ fontSize: '0.7rem' }}>🔊</span>
+          <div className="player-volume-control" style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#9B97A0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+              <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" />
+            </svg>
             <input
               type="range"
               min="0"
@@ -493,69 +739,89 @@ export default function BirthdayTemplate({ website, isPreview }: Props) {
               : 'An exquisite collection of memories and heartfelt wishes crafted uniquely for you.'}
           </motion.p>
 
+          <div ref={heroBtnMagnetic.ref} onMouseLeave={heroBtnMagnetic.handleMouseLeave}>
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{
+                opacity: 1,
+                x: heroBtnMagnetic.position.x,
+                y: heroBtnMagnetic.position.y,
+              }}
+              transition={{ duration: 0.8, delay: 1.5 }}
+              onClick={() => {
+                document.getElementById('gallery')?.scrollIntoView({ behavior: 'smooth' });
+              }}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                color: '#C9A96E',
+                fontSize: '0.85rem',
+                fontFamily: 'Courier New, monospace',
+                letterSpacing: '0.15em',
+                textTransform: 'uppercase',
+                cursor: 'pointer',
+                borderBottom: '1px solid rgba(201,169,110,0.3)',
+                paddingBottom: '0.25rem',
+              }}
+            >
+              Begin Journey
+            </motion.div>
+          </div>
+
+          {/* Premium Bouncing Scroll Indicator Pill */}
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1.5 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.7 }}
+            transition={{ delay: 2, duration: 1 }}
+            style={{
+              position: 'absolute',
+              bottom: '2.5rem',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '0.5rem',
+              cursor: 'pointer'
+            }}
             onClick={() => {
               document.getElementById('gallery')?.scrollIntoView({ behavior: 'smooth' });
             }}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              color: '#C9A96E',
-              fontSize: '0.85rem',
-              fontFamily: 'Courier New, monospace',
-              letterSpacing: '0.15em',
-              textTransform: 'uppercase',
-              cursor: 'pointer',
-              borderBottom: '1px solid rgba(201,169,110,0.3)',
-              paddingBottom: '0.25rem',
-            }}
           >
-            Begin Journey
+            <div
+              style={{
+                width: '20px',
+                height: '32px',
+                border: '1.5px solid rgba(201,169,110,0.4)',
+                borderRadius: '10px',
+                display: 'flex',
+                justifyContent: 'center',
+                paddingTop: '6px'
+              }}
+            >
+              <motion.div
+                animate={{
+                  y: [0, 8, 0]
+                }}
+                transition={{
+                  duration: 1.5,
+                  repeat: Infinity,
+                  ease: 'easeInOut'
+                }}
+                style={{
+                  width: '3px',
+                  height: '6px',
+                  background: '#C9A96E',
+                  borderRadius: '20px'
+                }}
+              />
+            </div>
           </motion.div>
         </div>
       </section>
 
-      {/* ── 2. PREMIUM MASONRY GALLERY ── */}
-      <section className="t-section" id="gallery">
-        <div className="t-section-header">
-          <span className="t-section-tag">Visual Archives</span>
-          <h2 className="t-section-title serif-heading">Captured Heartbeats</h2>
-          <div className="t-gold-divider" />
-        </div>
-
-        <div className="t-gallery-masonry">
-          {photos.map((src, i) => (
-            <motion.div
-              key={`masonry-photo-${i}`}
-              className="t-gallery-card"
-              initial={{ opacity: 0, y: 35 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-10%' }}
-              transition={{ duration: 0.7, delay: i * 0.08 }}
-              onClick={() => openLightbox(src, i)}
-            >
-              <div className="t-gallery-img-wrapper">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  className="t-gallery-img"
-                  src={src}
-                  alt={`Memory ${i + 1}`}
-                  loading="lazy"
-                />
-                <div className="t-gallery-overlay">
-                  <div className="t-gallery-title">Memory {String(i + 1).padStart(2, '0')}</div>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── 3. LUXURY LOVE LETTER ENVELOPE ── */}
+      {/* ── 2. LUXURY LOVE LETTER ENVELOPE ── */}
       <section className="t-section" style={{ background: '#05050c' }}>
         <div className="t-section-header">
           <span className="t-section-tag">A Sealed Message</span>
@@ -593,7 +859,7 @@ export default function BirthdayTemplate({ website, isPreview }: Props) {
                   whiteSpace: 'pre-wrap',
                 }}
               >
-                {message}
+                {personalMessage}
               </div>
             </div>
 
@@ -638,7 +904,8 @@ export default function BirthdayTemplate({ website, isPreview }: Props) {
                 </div>
 
                 <div style={{ fontFamily: 'Georgia, serif', fontSize: '1.1rem', lineHeight: 1.85, color: '#2a2a35', whiteSpace: 'pre-wrap', marginBottom: '3rem' }}>
-                  {message}
+                  {typedMessage}
+                  {typedMessage.length < generatedStory.length && <span className="handwriting-cursor">|</span>}
                 </div>
 
                 {fromName && (
@@ -657,7 +924,7 @@ export default function BirthdayTemplate({ website, isPreview }: Props) {
         </AnimatePresence>
       </section>
 
-      {/* ── 4. CHRONOLOGICAL TIMELINE ── */}
+      {/* ── 3. CHRONOLOGICAL TIMELINE (Memory Journey) ── */}
       <section className="t-section">
         <div className="t-section-header">
           <span className="t-section-tag">Chronology of Affection</span>
@@ -701,7 +968,7 @@ export default function BirthdayTemplate({ website, isPreview }: Props) {
         </div>
       </section>
 
-      {/* ── 5. SPECIAL MOMENTS / MAGAZINE SECTION ── */}
+      {/* ── 3b. MAGAZINE LAYOUT ── */}
       <section className="t-section" style={{ background: '#05050c' }}>
         <div className="t-section-header">
           <span className="t-section-tag">Editorial Highlight</span>
@@ -740,20 +1007,7 @@ export default function BirthdayTemplate({ website, isPreview }: Props) {
         </div>
       </section>
 
-      {/* ── 6. INTELLIGENT VIDEO MEMORIES ── */}
-      {website.video && (
-        <section className="t-section">
-          <div className="t-section-header">
-            <span className="t-section-tag">Cinematic Memoir</span>
-            <h2 className="t-section-title serif-heading">A Video Message</h2>
-            <div className="t-gold-divider" />
-          </div>
-
-          <VideoPlayer src={website.video} />
-        </section>
-      )}
-
-      {/* ── 7. REASONS I LOVE YOU ── */}
+      {/* ── 3c. REASONS I LOVE YOU ── */}
       <section className="t-section" style={{ background: '#05050c' }}>
         <div className="t-section-header">
           <span className="t-section-tag">Endless Reasons</span>
@@ -801,7 +1055,7 @@ export default function BirthdayTemplate({ website, isPreview }: Props) {
         </div>
       </section>
 
-      {/* ── 8. BIRTHDAY WISHES CAROUSEL ── */}
+      {/* ── 3d. BIRTHDAY WISHES CAROUSEL ── */}
       <section className="t-section">
         <div className="t-section-header">
           <span className="t-section-tag">Warm Whispers</span>
@@ -809,7 +1063,10 @@ export default function BirthdayTemplate({ website, isPreview }: Props) {
           <div className="t-gold-divider" />
         </div>
 
-        <div className="wishes-carousel-container">
+        <div className="wishes-carousel-container"
+          onMouseEnter={() => setIsHoveringCarousel(true)}
+          onMouseLeave={() => setIsHoveringCarousel(false)}
+        >
           <AnimatePresence mode="wait">
             <motion.div
               key={carouselIndex}
@@ -820,11 +1077,11 @@ export default function BirthdayTemplate({ website, isPreview }: Props) {
               className="t-glass t-wish-card"
               style={{ padding: '3rem 2.5rem' }}
             >
-              <div className="t-wish-quote" aria-hidden="true" style={{ fontSize: '3rem', color: '#C9A96E', opacity: 0.35, lineHeight: 0.1 }}>
+              <div className="t-wish-quote" aria-hidden="true" style={{ fontSize: '3rem', color: '#D4AF37', opacity: 0.35, lineHeight: 0.1 }}>
                 &ldquo;
               </div>
               <p className="t-wish-message" style={{ fontSize: '1.15rem', color: '#F0EDE6', fontStyle: 'italic', lineHeight: 1.75, fontFamily: 'Georgia, serif' }}>
-                {wishesList[carouselIndex].message}
+                &ldquo;{stableQuotes[carouselIndex]}&rdquo;
               </p>
               <div className="t-wish-author" style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', marginTop: '2rem' }}>
                 <div
@@ -833,20 +1090,20 @@ export default function BirthdayTemplate({ website, isPreview }: Props) {
                     width: '42px',
                     height: '42px',
                     borderRadius: '50%',
-                    background: 'linear-gradient(135deg, #C9A96E, #8B6E3E)',
+                    background: 'linear-gradient(135deg, var(--color-gold), var(--color-gold-light))',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    color: '#080810',
+                    color: '#050505',
                     fontWeight: 700,
                     fontSize: '1rem',
                   }}
                 >
-                  {wishesList[carouselIndex].name[0]}
+                  ✦
                 </div>
                 <div>
-                  <div style={{ fontWeight: 500, color: '#F0EDE6', fontSize: '0.9rem' }}>{wishesList[carouselIndex].name}</div>
-                  <div style={{ color: '#9B97A0', fontSize: '0.75rem' }}>{wishesList[carouselIndex].relation}</div>
+                  <div style={{ fontWeight: 500, color: '#F0EDE6', fontSize: '0.9rem' }}>A Voice of Affection</div>
+                  <div style={{ color: '#9B97A0', fontSize: '0.75rem' }}>Cinematic Quote</div>
                 </div>
               </div>
             </motion.div>
@@ -854,7 +1111,7 @@ export default function BirthdayTemplate({ website, isPreview }: Props) {
 
           {/* Dots Indicator */}
           <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem', marginTop: '1.75rem' }}>
-            {wishesList.map((_, i) => (
+            {stableQuotes.map((_, i) => (
               <button
                 key={`dot-${i}`}
                 onClick={() => setCarouselIndex(i)}
@@ -875,30 +1132,43 @@ export default function BirthdayTemplate({ website, isPreview }: Props) {
         </div>
       </section>
 
-      {/* ── 9. COUNTDOWN BLOCK ── */}
-      <section className="t-section" style={{ background: '#05050c' }}>
+      {/* ── 4. PREMIUM MASONRY GALLERY ── */}
+      <section className="t-section" id="gallery">
         <div className="t-section-header">
-          <span className="t-section-tag">Anticipation</span>
-          <h2 className="t-section-title serif-heading">Till the Next Celebration</h2>
+          <span className="t-section-tag">{stableTitles.tag}</span>
+          <h2 className="t-section-title serif-heading">{stableTitles.heading}</h2>
           <div className="t-gold-divider" />
         </div>
 
-        <div className="t-countdown-grid">
-          {[
-            { num: countdown.days, label: 'Days' },
-            { num: countdown.hours, label: 'Hours' },
-            { num: countdown.mins, label: 'Mins' },
-            { num: countdown.secs, label: 'Secs' },
-          ].map((c) => (
-            <div key={c.label} className="t-glass t-countdown-block" style={{ border: '1px solid rgba(201,169,110,0.15)' }}>
-              <div className="t-countdown-num glow-num">{c.num}</div>
-              <div className="t-countdown-label">{c.label}</div>
-            </div>
+        <div className="t-gallery-masonry">
+          {photos.map((src, i) => (
+            <motion.div
+              key={`masonry-photo-${i}`}
+              className="t-gallery-card"
+              initial={{ opacity: 0, y: 35 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-10%' }}
+              transition={{ duration: 0.7, delay: i * 0.08 }}
+              onClick={() => openLightbox(src, i)}
+            >
+              <div className="t-gallery-img-wrapper">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  className="t-gallery-img"
+                  src={src}
+                  alt={`Memory ${i + 1}`}
+                  loading="lazy"
+                />
+                <div className="t-gallery-overlay">
+                  <div className="t-gallery-title">{stableCaptions[i]}</div>
+                </div>
+              </div>
+            </motion.div>
           ))}
         </div>
       </section>
 
-      {/* ── 10. PHOTO WALL (Pinterest Scroller) ── */}
+      {/* ── 4b. PHOTO WALL (Pinterest Scroller) ── */}
       <section className="t-section" style={{ padding: '8rem 0' }}>
         <div className="t-section-header">
           <span className="t-section-tag">Infinite Canvas</span>
@@ -922,7 +1192,43 @@ export default function BirthdayTemplate({ website, isPreview }: Props) {
         </div>
       </section>
 
-      {/* ── 11. FINAL SURPRISE & CAKE / CONFETTI ── */}
+      {/* ── 5. INTELLIGENT VIDEO MEMORIES ── */}
+      {website.video && (
+        <section className="t-section">
+          <div className="t-section-header">
+            <span className="t-section-tag">Cinematic Memoir</span>
+            <h2 className="t-section-title serif-heading">A Video Message</h2>
+            <div className="t-gold-divider" />
+          </div>
+
+          <VideoPlayer src={website.video} />
+        </section>
+      )}
+
+      {/* ── 6. COUNTDOWN BLOCK ── */}
+      <section className="t-section" style={{ background: '#05050c' }}>
+        <div className="t-section-header">
+          <span className="t-section-tag">Anticipation</span>
+          <h2 className="t-section-title serif-heading">Till the Next Celebration</h2>
+          <div className="t-gold-divider" />
+        </div>
+
+        <div className="t-countdown-grid">
+          {[
+            { num: countdown.days, label: 'Days' },
+            { num: countdown.hours, label: 'Hours' },
+            { num: countdown.mins, label: 'Mins' },
+            { num: countdown.secs, label: 'Secs' },
+          ].map((c) => (
+            <div key={c.label} className="t-glass t-countdown-block" style={{ border: '1px solid rgba(201,169,110,0.15)' }}>
+              <div className="t-countdown-num glow-num">{c.num}</div>
+              <div className="t-countdown-label">{c.label}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── 7. BIRTHDAY RITUAL & CAKE ── */}
       <section className="t-section" style={{ background: '#05050c', textAlign: 'center' }}>
         <div className="t-section-header">
           <span className="t-section-tag">Interactive Ritual</span>
@@ -966,15 +1272,48 @@ export default function BirthdayTemplate({ website, isPreview }: Props) {
                   boxShadow: '0 0 40px rgba(201,169,110,0.15)',
                 }}
               >
-                <div style={{ fontSize: '3rem', marginBottom: '1.25rem' }}>🎁</div>
+                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}>
+                  <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#C9A96E" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ filter: 'drop-shadow(0 0 10px rgba(201,169,110,0.35))' }}>
+                    <rect x="3" y="8" width="18" height="4" rx="1" />
+                    <path d="M12 8V22M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7" />
+                    <path d="M7.5 8a2.5 2.5 0 0 1 0-5C11 3 12 8 12 8s-1-5-4.5-5z" />
+                    <path d="M16.5 8a2.5 2.5 0 0 0 0-5C13 3 12 8 12 8s1-5 4.5-5z" />
+                  </svg>
+                </div>
                 <h3 className="luxury-title" style={{ fontSize: '1.6rem', color: '#C9A96E', marginBottom: '1rem' }}>
                   A Lifetime of Marvels Waiting for You
                 </h3>
                 <p style={{ color: '#F0EDE6', lineHeight: 1.7, fontSize: '0.95rem', fontWeight: 300 }}>
                   Make a silent wish. As you orbit the sun once more, may every single dream of yours flourish and light your path with infinite joy.
                 </p>
+                <div ref={surpriseBtnMagnetic.ref} onMouseLeave={surpriseBtnMagnetic.handleMouseLeave}>
+                  <motion.button
+                    onClick={() => {
+                      if (typeof navigator !== 'undefined' && navigator.vibrate) {
+                        navigator.vibrate([100, 50, 100]);
+                      }
+                      setShowConfetti(true);
+                      setTimeout(() => setShowConfetti(false), 5000);
+                      setSurpriseOpen(true);
+                    }}
+                    animate={{
+                      x: surpriseBtnMagnetic.position.x,
+                      y: surpriseBtnMagnetic.position.y,
+                    }}
+                    className="btn-primary"
+                    style={{
+                      marginTop: '1.5rem',
+                      borderRadius: '50px',
+                      cursor: 'pointer',
+                      border: 'none',
+                      padding: '0.8rem 1.5rem',
+                    }}
+                  >
+                    ✨ Reveal Special Wish
+                  </motion.button>
+                </div>
                 {fromName && (
-                  <p style={{ marginTop: '2rem', color: '#C9A96E', fontFamily: 'Mrs Saint Delafield', fontSize: '3rem', margin: '2rem 0 0' }}>
+                  <p style={{ marginTop: '2.5rem', color: '#C9A96E', fontFamily: 'Mrs Saint Delafield', fontSize: '3rem', margin: '2rem 0 0' }}>
                     {fromName}
                   </p>
                 )}
@@ -988,7 +1327,7 @@ export default function BirthdayTemplate({ website, isPreview }: Props) {
         </div>
       </section>
 
-      {/* ── 12. FINAL WISH EPILOGUE ── */}
+      {/* ── 8. FINAL WISH EPILOGUE (Final Surprise) ── */}
       <section className="t-final">
         <div style={{ maxWidth: '800px', position: 'relative', zIndex: 1 }}>
           <div className="t-section-tag" style={{ marginBottom: '2rem' }}>Infinite Chapters Ahead</div>
@@ -1021,7 +1360,7 @@ export default function BirthdayTemplate({ website, isPreview }: Props) {
                 fontStyle: 'italic',
               }}
             >
-              Created with absolute love by {fromName} ♥
+              {stableEndingMessage}, {fromName}
             </p>
           )}
         </div>
@@ -1127,6 +1466,69 @@ export default function BirthdayTemplate({ website, isPreview }: Props) {
                 {lightboxIndex + 1} / {photos.length}
               </p>
             )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Luxury Secret Surprise Pop-up Modal */}
+      <AnimatePresence>
+        {surpriseOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="surprise-modal-overlay"
+            onClick={() => setSurpriseOpen(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, y: 30 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 30 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 190 }}
+              className="surprise-modal-content"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                className="surprise-close-btn"
+                onClick={() => setSurpriseOpen(false)}
+                aria-label="Close surprise"
+              >
+                ✕
+              </button>
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.25rem' }}>
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ filter: 'drop-shadow(0 0 8px rgba(212,175,55,0.4))' }}>
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                </svg>
+              </div>
+              <h3
+                className="serif-heading"
+                style={{ fontSize: '1.8rem', color: 'var(--color-gold)', marginBottom: '1.25rem', fontWeight: 300 }}
+              >
+                Our Sacred Bond
+              </h3>
+              <p
+                style={{
+                  color: 'var(--color-text-primary)',
+                  fontSize: '1rem',
+                  lineHeight: 1.8,
+                  fontWeight: 300,
+                  marginBottom: '2rem',
+                }}
+              >
+                &ldquo;Through every changing season, every sunrise we chase, and every quiet night we share, my promise remains constant: to stand by you, laugh with you, and cherish you forever.&rdquo;
+              </p>
+              <p
+                style={{
+                  color: 'var(--color-text-secondary)',
+                  fontSize: '0.8rem',
+                  fontFamily: 'var(--font-mono)',
+                  letterSpacing: '0.1em',
+                  textTransform: 'uppercase',
+                }}
+              >
+                Wishing you the happiest birthday of all.
+              </p>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>

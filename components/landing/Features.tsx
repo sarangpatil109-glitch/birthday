@@ -1,95 +1,195 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, type Variants } from 'framer-motion';
 
 const features = [
   {
-    icon: '🖼️',
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
+      </svg>
+    ),
     title: 'Photo Gallery',
-    desc: 'Upload multiple photos that display in a stunning cinematic gallery with lightbox.',
+    desc: 'Upload up to 10 photos displayed in a cinematic masonry gallery with full-screen lightbox viewing.',
   },
   {
-    icon: '✉️',
-    title: 'Personal Message',
-    desc: 'Your heartfelt message displayed as an animated love letter, sealed with a wax seal.',
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>
+      </svg>
+    ),
+    title: 'Personal Letter',
+    desc: 'Your heartfelt words displayed as a sealed envelope — opened with an elegant wax-seal animation.',
   },
   {
-    icon: '🎵',
-    title: 'Background Music',
-    desc: 'Choose from curated ambient tracks that play softly throughout the experience.',
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
+      </svg>
+    ),
+    title: 'Ambient Music',
+    desc: 'Choose from curated ambient soundscapes that play softly, creating a deeply immersive atmosphere.',
   },
   {
-    icon: '🎂',
-    title: 'Interactive Cake',
-    desc: 'A delightful animated cake with candles the birthday person can light and blow out.',
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+        <polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+      </svg>
+    ),
+    title: 'Video Memoir',
+    desc: 'Upload a personal video — displayed with intelligent aspect-ratio detection for perfect presentation.',
   },
   {
-    icon: '🔗',
-    title: 'Unique URL',
-    desc: 'Share a beautiful link like heartnote.in/w/ABCD1234 anywhere — forever.',
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+      </svg>
+    ),
+    title: 'Unique Link',
+    desc: 'A beautiful permanent URL like heartnote.in/w/XXXX — shareable via WhatsApp, QR code, or link.',
   },
   {
-    icon: '📱',
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/>
+      </svg>
+    ),
     title: 'Mobile Perfect',
-    desc: 'Fully responsive with smooth animations on every screen size.',
+    desc: 'Fully responsive across every device — looks stunning whether opened on a phone, tablet, or desktop.',
   },
 ];
 
+const container: Variants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.09 } },
+};
+
+const item: Variants = {
+  hidden: { opacity: 0, y: 22 },
+  show:   { opacity: 1, y: 0, transition: { duration: 0.55 } },
+};
+
 export default function Features() {
   return (
-    <section className="section" style={{ maxWidth: '1100px', margin: '0 auto' }}>
-      <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
-        <div className="mono" style={{ marginBottom: '1rem' }}>What You Get</div>
-        <h2
-          style={{
-            fontFamily: "'Cormorant Garamond', serif",
-            fontSize: 'clamp(2rem, 5vw, 3.5rem)',
-            fontWeight: 300,
-            color: '#F0EDE6',
-          }}
+    <section
+      className="section"
+      style={{
+        maxWidth: '1120px',
+        margin: '0 auto',
+      }}
+    >
+      {/* Header */}
+      <div style={{ textAlign: 'center', marginBottom: '4.5rem' }}>
+        <motion.span
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="section-label"
+        >
+          What You Get
+        </motion.span>
+        <motion.h2
+          initial={{ opacity: 0, y: 14 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7, delay: 0.1 }}
+          className="section-heading"
+          style={{ marginBottom: '1.25rem' }}
         >
           Everything to make them{' '}
-          <span className="gold-text" style={{ fontStyle: 'italic' }}>
+          <em className="gold-text" style={{ fontStyle: 'italic' }}>
             feel loved
-          </span>
-        </h2>
+          </em>
+        </motion.h2>
+        <motion.p
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          style={{
+            color: 'var(--color-text-secondary)',
+            maxWidth: '440px',
+            margin: '0 auto',
+            fontSize: '0.95rem',
+            fontWeight: 300,
+          }}
+        >
+          Six premium features, beautifully woven into one unforgettable experience.
+        </motion.p>
       </div>
 
-      <div
+      {/* Grid */}
+      <motion.div
+        variants={container}
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, margin: '-5%' }}
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-          gap: '1.25rem',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(310px, 1fr))',
+          gap: '1px',
+          background: 'var(--color-border)',
+          borderRadius: 'var(--radius-lg)',
+          overflow: 'hidden',
+          border: '1px solid var(--color-border)',
         }}
       >
-        {features.map((f, i) => (
+        {features.map((f) => (
           <motion.div
             key={f.title}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: i * 0.1 }}
-            className="glass"
-            style={{ padding: '2rem' }}
+            variants={item}
+            style={{
+              padding: '2.25rem 2rem',
+              background: 'var(--color-bg)',
+              transition: 'background var(--transition)',
+              cursor: 'default',
+            }}
+            whileHover={{ background: 'rgba(212,175,55,0.025)' } as never}
           >
-            <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>{f.icon}</div>
+            {/* Icon */}
+            <div
+              style={{
+                width: '42px',
+                height: '42px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: 'var(--color-gold-subtle)',
+                border: '1px solid var(--color-border-gold)',
+                borderRadius: '10px',
+                color: 'var(--color-gold)',
+                marginBottom: '1.4rem',
+              }}
+            >
+              {f.icon}
+            </div>
+
             <h3
               style={{
-                fontFamily: "'Cormorant Garamond', serif",
-                fontSize: '1.4rem',
+                fontFamily: 'var(--font-serif)',
+                fontSize: '1.25rem',
                 fontWeight: 400,
-                marginBottom: '0.75rem',
-                color: '#F0EDE6',
+                marginBottom: '0.7rem',
+                color: 'var(--color-text-primary)',
+                letterSpacing: '-0.01em',
               }}
             >
               {f.title}
             </h3>
-            <p style={{ color: '#9B97A0', lineHeight: 1.6, fontSize: '0.9rem' }}>
+            <p
+              style={{
+                color: 'var(--color-text-secondary)',
+                lineHeight: 1.7,
+                fontSize: '0.88rem',
+                fontWeight: 300,
+              }}
+            >
               {f.desc}
             </p>
           </motion.div>
         ))}
-      </div>
+      </motion.div>
     </section>
   );
 }

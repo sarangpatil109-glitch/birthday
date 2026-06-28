@@ -1,76 +1,330 @@
 @import "tailwindcss";
 
+/* ═══════════════════════════════════════════════════════════════
+   HEARTNOTE V3 — LUXURY DESIGN SYSTEM
+   Premium Token System · Apple × Linear × Stripe × Arc
+═══════════════════════════════════════════════════════════════ */
+
+/* ── Google Fonts (already loaded via layout.tsx) ── */
+
 :root {
-  --gold: #C9A96E;
-  --gold-light: #E8C987;
-  --gold-muted: #8B6E3E;
-  --bg-deep: #080810;
-  --bg-mid: #0D0D1A;
-  --bg-card: rgba(255,255,255,0.04);
-  --text-primary: #F0EDE6;
-  --text-muted: #9B97A0;
-  --border-gold: rgba(201,169,110,0.25);
-  --border-subtle: rgba(255,255,255,0.08);
-  --radius: 16px;
-  --radius-sm: 10px;
+  /* — Color Tokens ─────────────────────────── */
+  --color-bg:            #050505;
+  --color-surface:       #0e0e0e;
+  --color-surface-raised:#141414;
+  --color-glass:         rgba(255, 255, 255, 0.035);
+  --color-glass-raised:  rgba(255, 255, 255, 0.06);
+  --color-gold:          #D4AF37;
+  --color-gold-light:    #E8CC6A;
+  --color-gold-muted:    rgba(212, 175, 55, 0.6);
+  --color-gold-subtle:   rgba(212, 175, 55, 0.1);
+  --color-text-primary:  #F2EFE8;
+  --color-text-secondary:#A0A0A0;
+  --color-text-tertiary: #5A5A5A;
+  --color-border:        rgba(255, 255, 255, 0.07);
+  --color-border-gold:   rgba(212, 175, 55, 0.2);
+  --color-border-hover:  rgba(212, 175, 55, 0.45);
+  --color-error:         #E05555;
+  --color-error-bg:      rgba(224, 85, 85, 0.08);
+  --color-success:       #4CAF85;
+
+  /* — Legacy compat aliases ──────────────────── */
+  --gold:           var(--color-gold);
+  --gold-light:     var(--color-gold-light);
+  --gold-muted:     #8B7340;
+  --bg-deep:        var(--color-bg);
+  --bg-mid:         var(--color-surface);
+  --bg-card:        var(--color-glass);
+  --text-primary:   var(--color-text-primary);
+  --text-muted:     var(--color-text-secondary);
+  --border-gold:    var(--color-border-gold);
+  --border-subtle:  var(--color-border);
+  --radius:         14px;
+  --radius-sm:      9px;
+  --radius-lg:      20px;
+  --radius-xl:      28px;
+
+  /* — Spacing Scale ──────────────────────────── */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  20px;
+  --space-6:  24px;
+  --space-8:  32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+
+  /* — Typography ─────────────────────────────── */
+  --font-serif:  'Cormorant Garamond', Georgia, serif;
+  --font-sans:   'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono:   'Courier New', Courier, monospace;
+
+  /* — Shadows ────────────────────────────────── */
+  --shadow-sm:   0 2px 8px rgba(0,0,0,0.3);
+  --shadow-md:   0 8px 24px rgba(0,0,0,0.4);
+  --shadow-lg:   0 20px 60px rgba(0,0,0,0.55);
+  --shadow-xl:   0 40px 100px rgba(0,0,0,0.65);
+  --shadow-gold: 0 8px 32px rgba(212,175,55,0.12);
+
+  /* — Transitions ────────────────────────────── */
+  --ease-luxury: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --transition:  0.22s var(--ease-luxury);
 }
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
+/* ── Reset ──────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
-  background: var(--bg-deep);
-  color: var(--text-primary);
-  font-family: 'Georgia', serif;
+  background: var(--color-bg);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
-::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: var(--bg-deep); }
-::-webkit-scrollbar-thumb { background: var(--gold-muted); border-radius: 4px; }
+/* ── Scrollbar ──────────────────────────────────────────────── */
+::-webkit-scrollbar       { width: 3px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.2); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(212,175,55,0.4); }
 
+/* ── Base Typography ─────────────────────────────────────────── */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-serif);
+  font-weight: 300;
+  line-height: 1.1;
+  color: var(--color-text-primary);
+}
+
+p {
+  font-family: var(--font-sans);
+  color: var(--color-text-secondary);
+  line-height: 1.75;
+}
+
+a { color: inherit; text-decoration: none; }
+button { font-family: var(--font-sans); cursor: pointer; }
+input, textarea, select { font-family: var(--font-sans); }
+
+/* ── Design System Components ────────────────────────────────── */
+
+/* Glass Card */
 .glass {
-  background: var(--bg-card);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--border-gold);
+  background: var(--color-glass);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius);
+  transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition);
 }
 
+.glass:hover {
+  border-color: var(--color-border-gold);
+  box-shadow: var(--shadow-md);
+}
+
+/* Premium Card (elevated) */
+.card-premium {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition);
+}
+
+.card-premium:hover {
+  border-color: var(--color-border-gold);
+  box-shadow: var(--shadow-md), var(--shadow-gold);
+  transform: translateY(-3px);
+}
+
+/* Gold Text Gradient */
 .gold-text {
-  background: linear-gradient(135deg, #C9A96E 0%, #E8C987 50%, #C9A96E 100%);
+  background: linear-gradient(135deg, #D4AF37 0%, #F0D060 45%, #D4AF37 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-.section { padding: 6rem 1.5rem; position: relative; z-index: 1; }
-
-.mono {
-  font-family: 'Courier New', monospace;
-  font-size: 0.75rem;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--gold);
-}
-
+/* Gold Divider */
 .gold-divider {
-  width: 60px;
+  width: 48px;
   height: 1px;
-  background: linear-gradient(90deg, transparent, var(--gold), transparent);
-  margin: 1.5rem auto;
+  background: linear-gradient(90deg, transparent, var(--color-gold), transparent);
+  margin: var(--space-6) auto;
 }
 
-/* ── Responsive ────────────────────────────────────── */
-@media (max-width: 768px) {
-  .section { padding: 4rem 1rem; }
+/* Mono Label */
+.mono {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-gold);
 }
 
-/* Prevent iOS Safari from zooming on input focus */
+/* ── Button System ───────────────────────────────────────────── */
+
+/* Primary CTA Button */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: 0.9rem 2.2rem;
+  background: linear-gradient(135deg, #D4AF37 0%, #F0D060 100%);
+  color: #050505;
+  border: none;
+  border-radius: 50px;
+  font-family: var(--font-sans);
+  font-size: 0.92rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: opacity var(--transition), transform var(--transition), box-shadow var(--transition);
+  box-shadow: 0 4px 20px rgba(212, 175, 55, 0.2);
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+.btn-primary:hover {
+  opacity: 0.92;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 28px rgba(212, 175, 55, 0.3);
+}
+
+.btn-primary:active { transform: translateY(0); }
+.btn-primary:disabled {
+  background: rgba(212, 175, 55, 0.2);
+  color: rgba(5, 5, 5, 0.5);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Secondary Ghost Button */
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: 0.85rem 2rem;
+  background: transparent;
+  color: var(--color-gold);
+  border: 1px solid var(--color-border-gold);
+  border-radius: 50px;
+  font-family: var(--font-sans);
+  font-size: 0.88rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: all var(--transition);
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+.btn-ghost:hover {
+  border-color: var(--color-border-hover);
+  background: var(--color-gold-subtle);
+  transform: translateY(-1px);
+}
+
+.btn-ghost:active { transform: translateY(0); }
+
+/* ── Form Elements ───────────────────────────────────────────── */
+
+/* Luxury Input */
+.input-luxury {
+  width: 100%;
+  padding: 0.9rem 1.1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+  font-size: 0.92rem;
+  outline: none;
+  transition: border-color var(--transition), box-shadow var(--transition), background var(--transition);
+  -webkit-text-fill-color: var(--color-text-primary);
+}
+
+.input-luxury::placeholder {
+  color: var(--color-text-tertiary);
+}
+
+.input-luxury:focus {
+  border-color: var(--color-border-gold);
+  background: rgba(212, 175, 55, 0.03);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.08);
+}
+
+.input-luxury.error {
+  border-color: rgba(224, 85, 85, 0.5);
+}
+
+.input-luxury.error:focus {
+  box-shadow: 0 0 0 3px rgba(224, 85, 85, 0.08);
+}
+
+/* ── Section Layout ──────────────────────────────────────────── */
+.section {
+  padding: var(--space-24) var(--space-6);
+  position: relative;
+  z-index: 1;
+}
+
 @media (max-width: 768px) {
-  input,
-  textarea,
-  select {
+  .section {
+    padding: var(--space-16) var(--space-4);
+  }
+}
+
+/* ── Section Headers ─────────────────────────────────────────── */
+.section-label {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--color-gold);
+  margin-bottom: var(--space-4);
+  display: block;
+}
+
+.section-heading {
+  font-family: var(--font-serif);
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 300;
+  line-height: 1.1;
+  color: var(--color-text-primary);
+  letter-spacing: -0.01em;
+}
+
+/* ── Utility ─────────────────────────────────────────────────── */
+.text-gold { color: var(--color-gold); }
+.text-secondary { color: var(--color-text-secondary); }
+.text-serif { font-family: var(--font-serif); }
+.text-mono { font-family: var(--font-mono); }
+
+/* iOS Safari zoom fix */
+@media (max-width: 768px) {
+  input, textarea, select {
     font-size: max(16px, 1em) !important;
   }
 }

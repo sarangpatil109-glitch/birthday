@@ -19,11 +19,10 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
-// Viewport is a separate export in Next.js 13+ App Router
 export const viewport: Viewport = {
   width:        'device-width',
   initialScale: 1,
-  themeColor:   '#080810',
+  themeColor:   '#050505',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -37,7 +36,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           rel="stylesheet"
         />
       </head>
-      <body style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+      <body>
         {children}
       </body>
     </html>
