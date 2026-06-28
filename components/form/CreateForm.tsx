@@ -11,6 +11,7 @@ import { z } from 'zod';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import VideoPlayer from '../template/VideoPlayer';
 import { SONG_OPTIONS } from '@/utils';
 
 const schema = z.object({
@@ -561,26 +562,14 @@ export default function CreateForm() {
             </div>
           ) : (
             <div style={{ position: 'relative' }}>
-              <video
-                src={videoPreview!}
-                controls
-                playsInline
-                style={{
-                  width: '100%',
-                  borderRadius: '10px',
-                  maxHeight: '260px',
-                  objectFit: 'cover',
-                  display: 'block',
-                  background: '#0d0d1a',
-                }}
-              />
+              <VideoPlayer src={videoPreview!} isPreviewMode={true} />
               <button
                 type="button"
                 onClick={removeVideo}
                 style={{
                   position: 'absolute',
                   top: '10px',
-                  right: '10px',
+                  right: '25px',
                   background: 'rgba(8,8,16,0.85)',
                   color: '#F0EDE6',
                   border: 'none',
@@ -589,11 +578,12 @@ export default function CreateForm() {
                   cursor: 'pointer',
                   fontSize: '0.78rem',
                   fontWeight: 500,
+                  zIndex: 10,
                 }}
               >
                 ✕ Remove
               </button>
-              <p style={{ color: '#9B97A0', fontSize: '0.78rem', marginTop: '0.5rem' }}>
+              <p style={{ color: '#9B97A0', fontSize: '0.78rem', marginTop: '0.5rem', textAlign: 'center' }}>
                 {video.name} ({(video.size / 1024 / 1024).toFixed(1)}MB)
               </p>
             </div>
